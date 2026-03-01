@@ -1,0 +1,61 @@
+<div class="row justify-content-center">
+    <div class="col-md-10">
+        <div class="card shadow">
+            <div class="card-header bg-white py-3">
+                <h2 class="mb-3">{{title}}</h2>
+                <div class="d-flex justify-content-between align-items-center text-muted">
+                    <div>
+                        <span class="me-3"><i class="bi bi-person"></i> {{user_name}}</span>
+                        <span class="me-3"><i class="bi bi-calendar"></i> {{reg_date_format}}</span>
+                        <span><i class="bi bi-eye"></i> {{hit}}</span>
+                    </div>
+                    <!--@if(mod_date_format)-->
+                    <div class="text-sm">
+                        <small>수정일: {{mod_date_format}}</small>
+                    </div>
+                    <!--/if(mod_date_format)-->
+                </div>
+            </div>
+
+            <div class="card-body p-4">
+                <div class="board-content" style="min-height: 300px; white-space: pre-wrap;">{{content}}</div>
+            </div>
+
+            <div class="card-footer bg-white py-3">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <a href="board_list.jsp" class="btn btn-outline-secondary">목록으로</a>
+                    </div>
+                    <div class="d-flex gap-2">
+                        <!--@if(is_author)-->
+                        <a href="board_modify.jsp?id={{id}}" class="btn btn-primary">수정</a>
+                        <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteConfirmModal">삭제</button>
+                        <!--/if(is_author)-->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 삭제 확인 모달 -->
+<div class="modal fade" id="deleteConfirmModal" tabindex="-1" aria-labelledby="deleteConfirmModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form method="POST" action="board_delete.jsp">
+                <input type="hidden" name="id" value="{{id}}">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteConfirmModalLabel">삭제 확인</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    정말로 이 게시글을 삭제하시겠습니까?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
+                    <button type="submit" class="btn btn-danger">삭제</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

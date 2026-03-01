@@ -1,0 +1,65 @@
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>게시판</h2>
+    <!--@if(userId)-->
+    <a href="/board/board_write.jsp" class="btn btn-primary">글쓰기</a>
+    <!--/if(userId)-->
+</div>
+
+<div class="card shadow-sm mb-4">
+    <div class="card-body">
+        <form name="form1" method="get" class="row g-3">
+            <div class="col-md-10">
+                <input type="text" class="form-control" name="keyword" placeholder="제목 또는 내용으로 검색">
+            </div>
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-primary w-100">검색</button>
+            </div>
+        </form>
+    </div>
+</div>
+{{form_script}}
+
+<div class="card shadow-sm">
+    <div class="card-body">
+        <p class="text-muted mb-3">전체 <strong>{{total}}</strong>개의 게시글</p>
+
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead class="table-light">
+                    <tr>
+                        <th width="80" class="text-center">번호</th>
+                        <th>제목</th>
+                        <th width="120" class="text-center">작성자</th>
+                        <th width="100" class="text-center">조회수</th>
+                        <th width="150" class="text-center">작성일</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!--@loop(list)-->
+                    <tr>
+                        <td class="text-center">{{list.id}}</td>
+                        <td>
+                            <a href="/board/board_view.jsp?id={{list.id}}" class="text-decoration-none">
+                                {{list.title}}
+                            </a>
+                        </td>
+                        <td class="text-center">{{list.user_name}}</td>
+                        <td class="text-center">{{list.hit}}</td>
+                        <td class="text-center">{{list.reg_date_format}}</td>
+                    </tr>
+                    <!--/loop(list)-->
+                </tbody>
+            </table>
+        </div>
+
+        <div class="text-center mt-4">
+            {{pager}}
+        </div>
+    </div>
+</div>
+
+<!--@nif(userId)-->
+<div class="alert alert-info mt-4">
+    <i class="bi bi-info-circle"></i> 게시글을 작성하시려면 <a href="/member/login.jsp">로그인</a>이 필요합니다.
+</div>
+<!--/nif(userId)-->

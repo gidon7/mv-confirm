@@ -1,0 +1,32 @@
+<div class="row justify-content-center">
+    <div class="col-md-5">
+        <div class="card shadow">
+            <div class="card-body p-5">
+                <h2 class="text-center mb-4">로그인</h2>
+
+                <form name="form1" method="post" data-ajax="true" data-redirect="/">
+                    <div class="mb-3">
+                        <label for="email" class="form-label">이메일</label>
+                        <input type="email" class="form-control form-control-lg" id="email" name="email" placeholder="example@email.com">
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="passwd" class="form-label">비밀번호</label>
+                        <input type="password" class="form-control form-control-lg" id="passwd" name="passwd" placeholder="비밀번호를 입력하세요">
+                    </div>
+
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary btn-lg">로그인</button>
+                        <a href="/member/register.jsp" class="btn btn-outline-secondary">회원가입</a>
+                    </div>
+                </form>
+
+                <div class="text-center mt-4">
+                    <p class="text-muted mb-0">계정이 없으신가요? <a href="/member/register.jsp">회원가입</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{{form_script}}

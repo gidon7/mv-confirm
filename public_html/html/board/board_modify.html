@@ -1,0 +1,30 @@
+<div class="row justify-content-center">
+    <div class="col-md-10">
+        <div class="card shadow">
+            <div class="card-body p-4">
+                <h2 class="mb-4">게시글 수정</h2>
+
+                <form name="form1" method="post" data-ajax="true" data-redirect="board_view.jsp?id={{board_id}}">
+                    <div class="mb-3">
+                        <label for="title" class="form-label">제목 <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control form-control-lg" id="title" name="title" placeholder="제목을 입력하세요">
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="content" class="form-label">내용 <span class="text-danger">*</span></label>
+                        <textarea class="form-control" id="content" name="content" rows="15" placeholder="내용을 입력하세요 (최소 10자 이상)"></textarea>
+                        <div class="form-text">최소 10자 이상 입력해주세요.</div>
+                    </div>
+
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-primary btn-lg">수정하기</button>
+                        <a href="board_list.jsp" class="btn btn-outline-secondary btn-lg">목록</a>
+                        <a href="board_view.jsp?id={{board_id}}" class="btn btn-outline-secondary btn-lg">취소</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{{form_script}}

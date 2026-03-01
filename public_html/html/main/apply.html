@@ -1,0 +1,56 @@
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card shadow">
+            <div class="card-body p-5">
+                <h2 class="text-center mb-4">신청하기</h2>
+                <p class="text-center text-muted mb-4">
+                    아래 양식을 작성하시면 담당자가 확인 후 연락드리겠습니다.
+                </p>
+
+                <form name="form1" method="post" data-ajax="true" data-redirect="/">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="name" class="form-label">이름 <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="name" name="name" placeholder="홍길동">
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label for="email" class="form-label">이메일 <span class="text-danger">*</span></label>
+                            <input type="email" class="form-control" id="email" name="email" placeholder="example@email.com">
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="phone" class="form-label">연락처 <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="phone" name="phone" placeholder="010-1234-5678">
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label for="company" class="form-label">회사명</label>
+                            <input type="text" class="form-control" id="company" name="company" placeholder="(주)회사명">
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="position" class="form-label">직책/직급</label>
+                        <input type="text" class="form-control" id="position" name="position" placeholder="예: 대리, 팀장">
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="content" class="form-label">신청 내용 <span class="text-danger">*</span></label>
+                        <textarea class="form-control" id="content" name="content" rows="6" placeholder="문의하실 내용을 자세히 작성해주세요. (최소 10자 이상)"></textarea>
+                        <div class="form-text">최소 10자 이상 입력해주세요.</div>
+                    </div>
+
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary btn-lg">신청하기</button>
+                        <a href="/" class="btn btn-outline-secondary">취소</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{{form_script}}
