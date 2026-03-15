@@ -1,0 +1,119 @@
+<div class="page-title">대시보드</div>
+<div class="page-subtitle">전체 현황을 확인합니다.</div>
+
+<!-- 통계 카드 -->
+<div class="row g-3 mb-4">
+    <div class="col-sm-6 col-xl-3">
+        <div class="stat-card">
+            <div class="stat-icon" style="background:#e8f0fe; color:#0d6efd;">
+                <i class="bi bi-people-fill"></i>
+            </div>
+            <div>
+                <div class="stat-label">전체 회원</div>
+                <div class="stat-value">{{total_member}}</div>
+                <div class="stat-change text-success"><i class="bi bi-arrow-up-short"></i>이번 달 {{new_member}}명 가입</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-xl-3">
+        <div class="stat-card">
+            <div class="stat-icon" style="background:#fff0e6; color:#fd7e14;">
+                <i class="bi bi-file-text-fill"></i>
+            </div>
+            <div>
+                <div class="stat-label">게시글</div>
+                <div class="stat-value">{{total_board}}</div>
+                <div class="stat-change text-muted">오늘 {{today_board}}건</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-xl-3">
+        <div class="stat-card">
+            <div class="stat-icon" style="background:#e6f9f1; color:#198754;">
+                <i class="bi bi-clipboard-check-fill"></i>
+            </div>
+            <div>
+                <div class="stat-label">신청 (대기)</div>
+                <div class="stat-value">{{pending_apply}}</div>
+                <div class="stat-change text-danger">처리 필요</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-xl-3">
+        <div class="stat-card">
+            <div class="stat-icon" style="background:#f3e8ff; color:#6f42c1;">
+                <i class="bi bi-graph-up-arrow"></i>
+            </div>
+            <div>
+                <div class="stat-label">오늘 방문</div>
+                <div class="stat-value">{{today_visit}}</div>
+                <div class="stat-change text-muted">어제 대비</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 최근 목록 -->
+<div class="row g-3">
+    <div class="col-lg-7">
+        <div class="admin-card">
+            <div class="admin-card-header">
+                <i class="bi bi-file-text text-primary"></i>
+                <h6 class="admin-card-title">최근 게시글</h6>
+                <a href="/admin/board_list.jsp" class="btn btn-sm btn-outline-secondary ms-auto">전체 보기</a>
+            </div>
+            <table class="table admin-table">
+                <thead>
+                    <tr>
+                        <th>제목</th>
+                        <th>작성자</th>
+                        <th>날짜</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!--@loop(boardList)-->
+                    <tr>
+                        <td><a href="/board/board_view.jsp?id={{boardList.id}}" class="text-decoration-none text-dark">{{boardList.title}}</a></td>
+                        <td class="text-muted">{{boardList.user_name}}</td>
+                        <td class="text-muted">{{boardList.reg_date_format}}</td>
+                    </tr>
+                    <!--/loop(boardList)-->
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="col-lg-5">
+        <div class="admin-card">
+            <div class="admin-card-header">
+                <i class="bi bi-clipboard-check text-success"></i>
+                <h6 class="admin-card-title">신청 현황</h6>
+                <a href="/admin/apply_list.jsp" class="btn btn-sm btn-outline-secondary ms-auto">전체 보기</a>
+            </div>
+            <table class="table admin-table">
+                <thead>
+                    <tr>
+                        <th>이름</th>
+                        <th>상태</th>
+                        <th>날짜</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!--@loop(applyList)-->
+                    <tr>
+                        <td>{{applyList.name}}</td>
+                        <td>
+                            <!--@if(applyList.is_pending)-->
+                            <span class="status-badge" style="background:#fff3cd; color:#856404;">대기</span>
+                            <!--/if(applyList.is_pending)-->
+                            <!--@nif(applyList.is_pending)-->
+                            <span class="status-badge" style="background:#d1e7dd; color:#0a5c3a;">완료</span>
+                            <!--/nif(applyList.is_pending)-->
+                        </td>
+                        <td class="text-muted">{{applyList.reg_date_format}}</td>
+                    </tr>
+                    <!--/loop(applyList)-->
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

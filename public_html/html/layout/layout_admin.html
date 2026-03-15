@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{title}} — 관리자</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        :root {
+            --sidebar-width: 240px;
+            --sidebar-bg: #1e2a3a;
+            --sidebar-hover: #2d3f55;
+            --sidebar-active: #0d6efd;
+            --header-height: 56px;
+        }
+
+        body {
+            background: #f4f6fb;
+            font-size: 0.9rem;
+        }
+
+        /* 사이드바 */
+        #sidebar {
+            position: fixed;
+            top: 0; left: 0;
+            width: var(--sidebar-width);
+            height: 100vh;
+            background: var(--sidebar-bg);
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+        }
+
+        #sidebar .sidebar-logo {
+            height: var(--header-height);
+            display: flex;
+            align-items: center;
+            padding: 0 1.25rem;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+            flex-shrink: 0;
+        }
+
+        #sidebar .sidebar-logo a {
+            color: #fff;
+            font-size: 1.1rem;
+            font-weight: 700;
+            text-decoration: none;
+            letter-spacing: -0.3px;
+        }
+
+        #sidebar .sidebar-logo span {
+            color: #4da3ff;
+        }
+
+        #sidebar .nav-section {
+            padding: 1rem 0.75rem 0.25rem;
+            font-size: 0.7rem;
+            color: rgba(255,255,255,0.35);
+            font-weight: 600;
+            letter-spacing: 0.8px;
+            text-transform: uppercase;
+        }
+
+        #sidebar .nav-link {
+            color: rgba(255,255,255,0.65);
+            padding: 0.55rem 1rem;
+            border-radius: 6px;
+            margin: 1px 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            font-size: 0.875rem;
+            transition: all 0.15s;
+        }
+
+        #sidebar .nav-link i {
+            font-size: 1rem;
+            width: 20px;
+            text-align: center;
+            flex-shrink: 0;
+        }
+
+        #sidebar .nav-link:hover {
+            background: var(--sidebar-hover);
+            color: #fff;
+        }
+
+        #sidebar .nav-link.active {
+            background: var(--sidebar-active);
+            color: #fff;
+        }
+
+        #sidebar .nav-link .badge {
+            margin-left: auto;
+            font-size: 0.65rem;
+        }
+
+        /* 헤더 */
+        #topbar {
+            position: fixed;
+            top: 0;
+            left: var(--sidebar-width);
+            right: 0;
+            height: var(--header-height);
+            background: #fff;
+            border-bottom: 1px solid #e8ecf0;
+            z-index: 999;
+            display: flex;
+            align-items: center;
+            padding: 0 1.5rem;
+            gap: 1rem;
+        }
+
+        #topbar .breadcrumb {
+            margin: 0;
+            font-size: 0.85rem;
+        }
+
+        #topbar .topbar-right {
+            margin-left: auto;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        #topbar .topbar-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #6c757d;
+            font-size: 1.05rem;
+            cursor: pointer;
+            transition: background 0.15s;
+            position: relative;
+        }
+
+        #topbar .topbar-icon:hover {
+            background: #f0f3f8;
+            color: #333;
+        }
+
+        #topbar .topbar-icon .dot {
+            position: absolute;
+            top: 6px; right: 6px;
+            width: 7px; height: 7px;
+            background: #dc3545;
+            border-radius: 50%;
+            border: 1.5px solid #fff;
+        }
+
+        #topbar .user-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.3rem 0.75rem;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: background 0.15s;
+            font-size: 0.85rem;
+        }
+
+        #topbar .user-btn:hover {
+            background: #f0f3f8;
+        }
+
+        #topbar .user-avatar {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #0d6efd, #6610f2);
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            font-weight: 600;
+            flex-shrink: 0;
+        }
+
+        /* 본문 */
+        #main-content {
+            margin-left: var(--sidebar-width);
+            padding-top: var(--header-height);
+            min-height: 100vh;
+        }
+
+        .content-wrap {
+            padding: 1.75rem;
+        }
+
+        .page-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #1a1f36;
+            margin-bottom: 0.25rem;
+        }
+
+        .page-subtitle {
+            font-size: 0.82rem;
+            color: #6c757d;
+            margin-bottom: 1.5rem;
+        }
+
+        /* 통계 카드 */
+        .stat-card {
+            background: #fff;
+            border-radius: 10px;
+            padding: 1.25rem 1.5rem;
+            border: 1px solid #e8ecf0;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .stat-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.35rem;
+            flex-shrink: 0;
+        }
+
+        .stat-label {
+            font-size: 0.78rem;
+            color: #6c757d;
+            margin-bottom: 0.15rem;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #1a1f36;
+            line-height: 1;
+        }
+
+        .stat-change {
+            font-size: 0.75rem;
+            margin-top: 0.2rem;
+        }
+
+        /* 테이블 */
+        .admin-card {
+            background: #fff;
+            border-radius: 10px;
+            border: 1px solid #e8ecf0;
+            overflow: hidden;
+        }
+
+        .admin-card-header {
+            padding: 1rem 1.25rem;
+            border-bottom: 1px solid #e8ecf0;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .admin-card-title {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: #1a1f36;
+            margin: 0;
+        }
+
+        .admin-card-header .ms-auto {
+            margin-left: auto;
+        }
+
+        .admin-table {
+            margin: 0;
+            font-size: 0.85rem;
+        }
+
+        .admin-table thead th {
+            background: #f8f9fc;
+            border-bottom: 1px solid #e8ecf0;
+            font-weight: 600;
+            font-size: 0.78rem;
+            color: #6c757d;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+            padding: 0.65rem 1rem;
+        }
+
+        .admin-table tbody td {
+            padding: 0.75rem 1rem;
+            vertical-align: middle;
+            border-bottom: 1px solid #f0f3f8;
+            color: #374151;
+        }
+
+        .admin-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .admin-table tbody tr:hover td {
+            background: #f8f9fc;
+        }
+
+        /* 상태 뱃지 */
+        .status-badge {
+            padding: 0.2rem 0.6rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body>
+
+<!-- 사이드바 -->
+<nav id="sidebar">
+    <div class="sidebar-logo">
+        <a href="/admin/">Admin<span>Panel</span></a>
+    </div>
+
+    <div class="pt-2 pb-3 flex-grow-1">
+        <div class="nav-section">메인</div>
+        <a href="/admin/" class="nav-link active">
+            <i class="bi bi-speedometer2"></i> 대시보드
+        </a>
+
+        <div class="nav-section">회원</div>
+        <a href="/admin/member_list.jsp" class="nav-link">
+            <i class="bi bi-people"></i> 회원 관리
+        </a>
+
+        <div class="nav-section">콘텐츠</div>
+        <a href="/admin/board_list.jsp" class="nav-link">
+            <i class="bi bi-file-text"></i> 게시판 관리
+            <span class="badge bg-danger">3</span>
+        </a>
+        <a href="/admin/apply_list.jsp" class="nav-link">
+            <i class="bi bi-clipboard-check"></i> 신청 관리
+        </a>
+
+        <div class="nav-section">시스템</div>
+        <a href="/admin/setting.jsp" class="nav-link">
+            <i class="bi bi-gear"></i> 설정
+        </a>
+    </div>
+
+    <div style="padding: 1rem; border-top: 1px solid rgba(255,255,255,0.08);">
+        <a href="/member/logout.jsp" class="nav-link" style="margin: 0;">
+            <i class="bi bi-box-arrow-left"></i> 로그아웃
+        </a>
+    </div>
+</nav>
+
+<!-- 상단 헤더 -->
+<header id="topbar">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="/admin/" class="text-decoration-none text-muted">관리자</a></li>
+            <li class="breadcrumb-item active text-dark fw-semibold">{{title}}</li>
+        </ol>
+    </nav>
+    <div class="topbar-right">
+        <div class="topbar-icon">
+            <i class="bi bi-bell"></i>
+            <span class="dot"></span>
+        </div>
+        <div class="dropdown">
+            <div class="user-btn" data-bs-toggle="dropdown">
+                <div class="user-avatar">{{userInitial}}</div>
+                <span class="fw-medium d-none d-sm-inline">{{userName}}</span>
+                <i class="bi bi-chevron-down" style="font-size:0.7rem; color:#6c757d;"></i>
+            </div>
+            <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0" style="font-size:0.85rem; min-width:160px;">
+                <li><a class="dropdown-item" href="#"><i class="bi bi-person me-2"></i>내 정보</a></li>
+                <li><hr class="dropdown-divider"></li>
+                <li><a class="dropdown-item text-danger" href="/member/logout.jsp"><i class="bi bi-box-arrow-left me-2"></i>로그아웃</a></li>
+            </ul>
+        </div>
+    </div>
+</header>
+
+<!-- 본문 -->
+<main id="main-content">
+    <div class="content-wrap">
+        <!--@include(BODY)-->
+    </div>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="/js/common.js"></script>
+</body>
+</html>

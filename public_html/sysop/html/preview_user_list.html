@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>회원 관리 — 미리보기</title>
+<link rel="stylesheet" href="css/admin2.css">
+<style>
+/* 프리뷰 전용 레이아웃 */
+body { background: #f8fafc; }
+
+.preview-gnb {
+    position: fixed; top: 0; left: 0; width: 100%; height: 56px;
+    background: #1e293b; display: flex; align-items: center; z-index: 9999;
+}
+.preview-gnb .logo {
+    width: 220px; height: 56px; background: #0f172a;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 17px; font-weight: 700; color: #fff; letter-spacing: -0.5px; flex-shrink: 0;
+}
+.preview-gnb .logo span { color: #60a5fa; margin-right: 6px; }
+.preview-gnb .gnb-menu { display: flex; height: 56px; }
+.preview-gnb .gnb-menu a {
+    display: flex; align-items: center; padding: 0 20px;
+    color: rgba(255,255,255,0.6); font-size: 14px; font-weight: 500;
+    border-right: 1px solid rgba(255,255,255,0.08); text-decoration: none;
+    transition: all 0.15s;
+}
+.preview-gnb .gnb-menu a:hover { background: rgba(255,255,255,0.08); color: #fff; }
+.preview-gnb .gnb-menu a.current { background: #2563eb; color: #fff; }
+.preview-gnb .gnb-right { margin-left: auto; display: flex; align-items: center; gap: 8px; padding: 0 16px; }
+.preview-gnb .gnb-right .user-info { color: rgba(255,255,255,0.7); font-size: 13px; text-align: right; line-height: 1.4; }
+.gnb-btn { height: 30px; padding: 0 10px; border-radius: 4px; font-size: 12px; border: 1px solid transparent; cursor: pointer; color: #fff; font-family: inherit; }
+.gnb-btn.blue  { background: #2563eb; border-color: #2563eb; }
+.gnb-btn.white { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.2); }
+
+.preview-lnb {
+    position: fixed; top: 56px; left: 0; width: 220px;
+    height: calc(100% - 56px); background: #fff;
+    border-right: 1px solid #e2e8f0; overflow-y: auto; z-index: 9990;
+}
+.lnb-section { border-bottom: 1px solid #e2e8f0; }
+.lnb-title {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 11px 14px; font-size: 13px; font-weight: 700;
+    color: #1e293b; background: #f8fafc; border-bottom: 1px solid #e2e8f0; cursor: pointer;
+}
+.lnb-title .arrow { color: #94a3b8; font-size: 11px; }
+.lnb-sub { padding: 4px 0 8px; }
+.lnb-sub a {
+    display: block; margin: 0 8px; padding: 6px 8px 6px 28px;
+    color: #64748b; font-size: 13px; border-radius: 4px; text-decoration: none;
+    transition: all 0.15s;
+}
+.lnb-sub a:hover { color: #2563eb; background: #eff6ff; }
+.lnb-sub a.active { background: #2563eb; color: #fff; }
+
+.preview-breadcrumb {
+    position: fixed; top: 56px; left: 220px; right: 0; height: 44px;
+    background: #fff; border-bottom: 1px solid #e2e8f0;
+    display: flex; align-items: center; padding: 0 20px; gap: 6px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04); z-index: 999;
+}
+.preview-breadcrumb .bc-arrow { color: #94a3b8; font-size: 18px; margin-right: 6px; }
+.preview-breadcrumb .bc-title { font-size: 15px; font-weight: 700; color: #1e293b; }
+.preview-breadcrumb .bc-util { margin-left: auto; display: flex; align-items: center; gap: 8px; color: #64748b; font-size: 13px; }
+
+.preview-content {
+    margin-left: 220px;
+    padding-top: calc(56px + 44px);
+    min-height: 100vh;
+}
+.preview-inner { padding: 18px 20px 30px; max-width: 1400px; }
+
+/* 페이징 샘플 */
+.page-sample { display: inline-flex; align-items: center; gap: 3px; }
+.page-sample a {
+    display: inline-flex; align-items: center; justify-content: center;
+    min-width: 28px; height: 28px; padding: 0 4px;
+    border: 1px solid #e2e8f0; border-radius: 4px;
+    background: #fff; color: #64748b; font-size: 12px; text-decoration: none;
+    transition: all 0.15s;
+}
+.page-sample a:hover { background: #f1f5f9; }
+.page-sample a.on { background: #2563eb; border-color: #2563eb; color: #fff; font-weight: 700; }
+.page-sample .sep { color: #e2e8f0; padding: 0 2px; }
+</style>
+</head>
+<body>
+
+<!-- GNB -->
+<div class="preview-gnb">
+    <div class="logo"><span>■</span>관리자시스템</div>
+    <div class="gnb-menu">
+        <a href="#">대시보드</a>
+        <a href="#" class="current">회원관리</a>
+        <a href="#">콘텐츠</a>
+        <a href="#">게시판</a>
+        <a href="#">통계</a>
+        <a href="#">설정</a>
+    </div>
+    <div class="gnb-right">
+        <div class="user-info"><strong>관리자</strong>님, 환영합니다.</div>
+        <button class="gnb-btn white">사이트 ›</button>
+        <button class="gnb-btn blue">로그아웃</button>
+    </div>
+</div>
+
+<!-- LNB -->
+<nav class="preview-lnb">
+    <div class="lnb-section">
+        <div class="lnb-title">👥 회원 관리 <span class="arrow">▾</span></div>
+        <div class="lnb-sub">
+            <a href="#" class="active">회원 목록</a>
+            <a href="#">회원 등록</a>
+            <a href="#">탈퇴 회원</a>
+            <a href="#">휴면 회원</a>
+        </div>
+    </div>
+    <div class="lnb-section">
+        <div class="lnb-title">📋 그룹 관리 <span class="arrow">▾</span></div>
+        <div class="lnb-sub">
+            <a href="#">그룹 목록</a>
+            <a href="#">권한 설정</a>
+        </div>
+    </div>
+    <div class="lnb-section">
+        <div class="lnb-title">📊 로그 <span class="arrow">▾</span></div>
+        <div class="lnb-sub">
+            <a href="#">접속 로그</a>
+            <a href="#">변경 로그</a>
+        </div>
+    </div>
+</nav>
+
+<!-- 브레드크럼 -->
+<div class="preview-breadcrumb">
+    <span class="bc-arrow">›</span>
+    <span class="bc-title">회원 관리</span>
+    <div class="bc-util">
+        <span>🔄</span>
+    </div>
+</div>
+
+<!-- 본문 -->
+<div class="preview-content">
+<div class="preview-inner">
+
+<!-- ========== 여기서부터 user_list.html 내용 ========== -->
+
+<form name="form1" method="get">
+<input type="hidden" name="ord" value="">
+<input type="hidden" name="mode" value="">
+
+<table class="t_tb01" cellpadding="0" cellspacing="0" style="table-layout:fixed;">
+<col width="120"><col>
+<col width="120"><col>
+<tr>
+    <td class="t_th01">회원유형</td>
+    <td class="t_td01" colspan="3">
+        <label><input type="radio" name="s_user_kind" value="" checked> 전체 </label> &nbsp;
+        <label><input type="radio" name="s_user_kind" value="U"> 일반회원 </label> &nbsp;
+        <label><input type="radio" name="s_user_kind" value="T"> 강사 </label> &nbsp;
+        <label><input type="radio" name="s_user_kind" value="M"> 운영자 </label> &nbsp;
+    </td>
+</tr>
+<tr>
+    <td class="t_th01">상태</td>
+    <td class="t_td01">
+        <label><input type="radio" name="s_status" value="" checked> 전체 </label> &nbsp;
+        <label><input type="radio" name="s_status" value="1"> 정상 </label> &nbsp;
+        <label><input type="radio" name="s_status" value="0"> 중지 </label> &nbsp;
+        <label><input type="radio" name="s_status" value="30"> 휴면대상 </label> &nbsp;
+        <label><input type="radio" name="s_status" value="-2"> 탈퇴 </label> &nbsp;
+    </td>
+    <td class="t_th01">회원 소속</td>
+    <td class="t_td01">
+        <select name="s_dept">
+            <option value=""> - 전체 - </option>
+            <option value="-99">[미소속]</option>
+            <option value="1">개발팀</option>
+            <option value="2">영업팀</option>
+        </select>
+    </td>
+</tr>
+<tr>
+    <td class="t_th01">검색</td>
+    <td class="t_td01" colspan="3">
+        <select name="s_field">
+            <option value=""> - 전체 - </option>
+            <option value="a.id">회원번호</option>
+            <option value="a.login_id">회원아이디</option>
+            <option value="a.user_nm">회원명</option>
+            <option value="a.email">이메일</option>
+            <option value="a.mobile">휴대전화</option>
+        </select>
+        <input type="text" name="s_keyword" size="30" placeholder="검색어를 입력하세요">
+        <button type="submit" class="bttn2 blue">검색</button>
+        <div class="button-right">
+            <button type="button" class="bttn2 red">가려진 정보 보기</button>
+        </div>
+    </td>
+</tr>
+</table>
+
+<table class="a_tb01" cellpadding="0" cellspacing="0" border="0">
+<tr>
+    <td class="a_th01">
+        총 <strong>8</strong>명 &nbsp;
+        <select name="s_listnum">
+            <option value="20">20</option>
+            <option value="50">50</option>
+            <option value="100">100</option>
+        </select> 건씩 보기
+    </td>
+    <td class="a_td01">
+        <button type="button" class="bttn2">소속변경</button>
+        <button type="button" class="bttn2">메일</button>
+        <button type="button" class="bttn2">SMS</button>
+        <button type="button" class="bttn2">쪽지</button>
+        <button type="button" class="bttn2">EXCEL</button>
+        <button type="button" class="bttn2 sky">일괄등록</button>
+        <button type="button" class="bttn2 blue">등록</button>
+    </td>
+</tr>
+</table>
+</form>
+
+<form name="form2" method="post">
+<table class="l_tb01" cellpadding="0" cellspacing="0">
+<col width="50">
+<col width="80">
+<col>
+<col>
+<col width="110">
+<col>
+<col width="50">
+<col width="100">
+<col width="90">
+<col width="70">
+<col width="60">
+<col width="30">
+<thead>
+<tr align="center">
+    <td class="l_th01">No</td>
+    <td class="l_th01">회원번호</td>
+    <td class="l_th01">소속</td>
+    <td class="l_th01">회원명</td>
+    <td class="l_th01">휴대전화</td>
+    <td class="l_th01">이메일</td>
+    <td class="l_th01">수강</td>
+    <td class="l_th01">실결제금액</td>
+    <td class="l_th01">접속일</td>
+    <td class="l_th01">가입일</td>
+    <td class="l_th01">상태</td>
+    <td class="l_th01"><input type="checkbox"></td>
+</tr>
+</thead>
+<tbody>
+<tr class="l_tr_odd" align="center">
+    <td class="l_td01">8</td>
+    <td class="l_td01">1008</td>
+    <td class="l_td01">개발팀</td>
+    <td class="l_td01" align="left"><span class="label blue">운영자</span> 홍길동 <span style="color:#94a3b8;font-size:12px;">(hong)</span></td>
+    <td class="l_td01">010-1234-5678</td>
+    <td class="l_td01"><a href="#">hong@example.com</a></td>
+    <td class="l_td01" align="right">12건</td>
+    <td class="l_td01" align="right">320,000원</td>
+    <td class="l_td01">2026.03.14</td>
+    <td class="l_td01">2024.01.05</td>
+    <td class="l_td01"><span class="label">정상</span></td>
+    <td class="l_td01"><input type="checkbox" name="idx" value="1008"></td>
+</tr>
+<tr class="l_tr_even" align="center">
+    <td class="l_td01">7</td>
+    <td class="l_td01">1007</td>
+    <td class="l_td01">영업팀</td>
+    <td class="l_td01" align="left">김영희 <span style="color:#94a3b8;font-size:12px;">(kimyh)</span></td>
+    <td class="l_td01">010-9876-5432</td>
+    <td class="l_td01"><a href="#">kim@example.com</a></td>
+    <td class="l_td01" align="right">5건</td>
+    <td class="l_td01" align="right">150,000원</td>
+    <td class="l_td01">2026.03.10</td>
+    <td class="l_td01">2024.03.12</td>
+    <td class="l_td01"><span class="label">정상</span></td>
+    <td class="l_td01"><input type="checkbox" name="idx" value="1007"></td>
+</tr>
+<tr class="l_tr_odd" align="center">
+    <td class="l_td01">6</td>
+    <td class="l_td01">1006</td>
+    <td class="l_td01">[미소속]</td>
+    <td class="l_td01" align="left">이철수 <span style="color:#94a3b8;font-size:12px;">(leecs)</span></td>
+    <td class="l_td01">-</td>
+    <td class="l_td01"><a href="#">lee@example.com</a></td>
+    <td class="l_td01" align="right">0건</td>
+    <td class="l_td01" align="right">0원</td>
+    <td class="l_td01">2026.02.28</td>
+    <td class="l_td01">2024.05.20</td>
+    <td class="l_td01"><span class="label">중지</span></td>
+    <td class="l_td01"><input type="checkbox" name="idx" value="1006"></td>
+</tr>
+<tr class="l_tr_even" align="center">
+    <td class="l_td01">5</td>
+    <td class="l_td01">1005</td>
+    <td class="l_td01">개발팀</td>
+    <td class="l_td01" align="left"><span class="label red">최고관리자</span> 관리자 <span style="color:#94a3b8;font-size:12px;">(admin)</span></td>
+    <td class="l_td01">010-0000-0000</td>
+    <td class="l_td01"><a href="#">admin@example.com</a></td>
+    <td class="l_td01" align="right">-</td>
+    <td class="l_td01" align="right">-</td>
+    <td class="l_td01">2026.03.15</td>
+    <td class="l_td01">2023.01.01</td>
+    <td class="l_td01"><span class="label">정상</span></td>
+    <td class="l_td01"><input type="checkbox" name="idx" value="1005"></td>
+</tr>
+<tr class="l_tr_odd" align="center">
+    <td class="l_td01">4</td>
+    <td class="l_td01">1004</td>
+    <td class="l_td01">영업팀</td>
+    <td class="l_td01" align="left">박지수 <span style="color:#94a3b8;font-size:12px;">(parkjs)</span></td>
+    <td class="l_td01">010-5555-1234</td>
+    <td class="l_td01"><a href="#">park@example.com</a></td>
+    <td class="l_td01" align="right">3건</td>
+    <td class="l_td01" align="right">90,000원</td>
+    <td class="l_td01">2026.01.20</td>
+    <td class="l_td01">2024.07.08</td>
+    <td class="l_td01"><span class="label">휴면대상</span></td>
+    <td class="l_td01"><input type="checkbox" name="idx" value="1004"></td>
+</tr>
+<tr class="l_tr_even" align="center">
+    <td class="l_td01">3</td>
+    <td class="l_td01">1003</td>
+    <td class="l_td01">개발팀</td>
+    <td class="l_td01" align="left">최민준 <span style="color:#94a3b8;font-size:12px;">(choiMJ)</span></td>
+    <td class="l_td01">010-2222-3333</td>
+    <td class="l_td01"><a href="#">choi@example.com</a></td>
+    <td class="l_td01" align="right">8건</td>
+    <td class="l_td01" align="right">240,000원</td>
+    <td class="l_td01">2026.03.01</td>
+    <td class="l_td01">2024.09.15</td>
+    <td class="l_td01"><span class="label">정상</span></td>
+    <td class="l_td01"><input type="checkbox" name="idx" value="1003"></td>
+</tr>
+<tr class="l_tr_odd" align="center">
+    <td class="l_td01">2</td>
+    <td class="l_td01">1002</td>
+    <td class="l_td01">[미소속]</td>
+    <td class="l_td01" align="left">윤서연 <span style="color:#94a3b8;font-size:12px;">(yoonSY)</span></td>
+    <td class="l_td01">010-7777-8888</td>
+    <td class="l_td01"><a href="#">yoon@example.com</a></td>
+    <td class="l_td01" align="right">1건</td>
+    <td class="l_td01" align="right">30,000원</td>
+    <td class="l_td01">2025.12.11</td>
+    <td class="l_td01">2025.01.22</td>
+    <td class="l_td01"><span class="label">탈퇴</span></td>
+    <td class="l_td01"><input type="checkbox" name="idx" value="1002"></td>
+</tr>
+<tr class="l_tr_even" align="center">
+    <td class="l_td01">1</td>
+    <td class="l_td01">1001</td>
+    <td class="l_td01">영업팀</td>
+    <td class="l_td01" align="left">정다은 <span style="color:#94a3b8;font-size:12px;">(jungDE)</span></td>
+    <td class="l_td01">010-4444-9999</td>
+    <td class="l_td01"><a href="#">jung@example.com</a></td>
+    <td class="l_td01" align="right">2건</td>
+    <td class="l_td01" align="right">60,000원</td>
+    <td class="l_td01">2026.02.05</td>
+    <td class="l_td01">2025.03.30</td>
+    <td class="l_td01"><span class="label">정상</span></td>
+    <td class="l_td01"><input type="checkbox" name="idx" value="1001"></td>
+</tr>
+</tbody>
+</table>
+
+<table class="p_tb01" cellpadding="0" cellspacing="0">
+<tr>
+    <td class="p_td01">
+        <div class="page-sample">
+            <a href="#">«</a>
+            <a href="#">‹</a>
+            <a href="#" class="on">1</a>
+            <a href="#">2</a>
+            <a href="#">3</a>
+            <a href="#">4</a>
+            <a href="#">5</a>
+            <a href="#">›</a>
+            <a href="#">»</a>
+        </div>
+    </td>
+</tr>
+</table>
+</form>
+
+<!-- ========== user_list.html 끝 ========== -->
+
+</div>
+</div>
+
+<script>
+// 라벨 색상 자동 지정
+var colors = {
+    "정상":"blue", "중지":"gray", "탈퇴":"purple",
+    "휴면대상":"red", "최고관리자":"red", "운영자":"blue"
+};
+document.querySelectorAll(".label").forEach(function(el) {
+    var v = el.textContent.trim();
+    if(colors[v]) el.classList.add(colors[v]);
+});
+
+// 행 hover
+document.querySelectorAll(".l_tb01 tbody tr").forEach(function(tr) {
+    tr.addEventListener("mouseenter", function() { this.classList.add("l_tr_hover"); });
+    tr.addEventListener("mouseleave", function() { this.classList.remove("l_tr_hover"); });
+});
+</script>
+</body>
+</html>
