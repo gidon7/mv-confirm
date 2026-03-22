@@ -1,33 +1,19 @@
-<!-- layout_blank.html에서 admin2.css를 이미 로드함 (중복 제거) -->
-<div id="top_contents">
-	<div id="logo">
-		<!-- <a href="../main/index.jsp" target="_Main"><img src="../html/images/admin/main/main_logo_2016_2_default.png" align="absmiddle"></a> -->
-		<a class="txt_logo" href="../main/index.jsp" target="_Main"><i class="fa fa-desktop"></i> 교육통합관리시스템</a>
-	</div>
-	<div id="gnb">
-		<ul id="top_menu">
-			<!--@loop(list)-->
-			<li><a href="#" onclick="return go(this);" class="{{list.current}}" id="{{list.id}}">{{list.name}}</a></li>
-			<!--/loop(list)-->
-			<!--<li><a href="javascript:OpenWindow('../manual/', '_MANUAL', 1500, 1100)">{{sysop.manual}}매뉴얼</a></li>-->
-		</ul>
-	</div>
-	<div id="utility">
-		<div id="buttons">
-			<button type="button" class="top_button blue" onclick="if(confirm('로그아웃하시겠습니까?')) top.location.href='../main/logout.jsp';">{{sysop.logout}}로그아웃</button>
-			<!--@if(super_block)--><button type="button" class="top_button green" onclick="window.open('https://help.malgnsoft.com/');">고객센터 <i class="fa fa-angle-right" aria-hidden="true"></i></button><!--/if(super_block)-->
-			<button type="button" class="top_button white" onclick="window.open('/main/index.jsp');">{{sysop.sitelink}}사이트 <i class="fa fa-angle-right" aria-hidden="true"></i></button>
-			<!--@if(super_malgn_block)-->
-			<a href="../alog/alog_list.jsp" target="_Main"><button type="button" class="top_button blue">액션로그</button></a>
-			<!--/if(super_malgn_block)-->
-		</div>
-		<div id="user">
-			<strong>{{user_name}}</strong>{{sysop.welcome}}님, 환영합니다.<br>
-			<span>
-				<a href="javascript:void(0);" onclick="OpenWindows('../main/page.jsp?code=clause', '__C', 1024, 800);" style="color:#efefef;">이용약관</a>
-				|
-				<a href="javascript:void(0);" onclick="OpenWindows('../main/page.jsp?code=privacy', '__C', 1024, 800);" style="color:#efefef;">개인정보처리방침</a>
-			</span>
+<!-- layout_admin.html에서 CSS/JS를 이미 로드함 -->
+
+<!-- 1depth GNB 탭 -->
+<div id="gnb">
+	<ul id="top_menu">
+		<!--@loop(list)-->
+		<li><a href="#" onclick="return go(this);" class="{{list.current}}" id="{{list.id}}">{{list.name}}</a></li>
+		<!--/loop(list)-->
+	</ul>
+</div>
+
+<!-- 2-3depth 아코디언 (AJAX로 채워짐) -->
+<div id="lnb_wrapper">
+	<div id="lnb_contents_wrapper">
+		<div id="lnb_contents">
+			<ul class="acc-nav" id="lnb-0"></ul>
 		</div>
 	</div>
 </div>
@@ -35,71 +21,42 @@
 <script>
 function go(el, mid, lnb) {
 	var menus = document.getElementById("top_menu").getElementsByTagName("a");
-	for(var i=0; i<menus.length; i++) {
-		menus[i].className = "";
-	}
+	for(var i=0; i<menus.length; i++) { menus[i].className = ""; }
 
 	if(mid) el = document.getElementById(mid);
-	if(!el) {
-		el = menus[0];
-		if(!top.document.getElementById("_MFRM")) call();
-	}
+	if(!el) el = menus[0];
+	if(!el) return false;
 
 	SetCookie("mid", el.getAttribute("id"));
 	el.className = "current";
 
-	if(!mid) {
-		if(top.document.getElementById("_MFRM")) {
-			parent._Menu.location.href = "../main/menu2.jsp?mid=" + el.getAttribute("id") + "&t={{now}}";
-		} else {
-			document.getElementById("sys-frame-menu").src = "../main/menu2.jsp?mid=" + el.getAttribute("id") + "&t={{now}}";
-			/*
-			$.get("../main/menu2.jsp?mode=json&mid=" + el.getAttribute("id") + "&t={{now}}", function(data) {
-				var menus = JSON.parse(data);
-				$(".acc-nav").attr("id", "lnb-" + el.getAttribute("id")).html("");
-				for(var i = 0; i < menus.length; i++) {
-					addAccNode(el.getAttribute("id"), menus[i].id, menus[i].parent_id, menus[i].depth, menus[i].name, menus[i].link, menus[i].target, menus[i].open_yn, menus[i].icon);
-				}
-				setAccNav();
-			}, "html").fail(function() {
-				alert("메뉴를 불러오는 중 오류가 발생했습니다.");
-			});
-			*/
+	var menuId = el.getAttribute("id");
+	$.get("../main/menu2.jsp?mode=json&mid=" + menuId + "&t={{now}}", function(data) {
+		var items = JSON.parse(data);
+		$(".acc-nav").attr("id", "lnb-" + menuId).html("");
+		for(var i = 0; i < items.length; i++) {
+			addAccNode(menuId, items[i].id, items[i].parent_id, items[i].depth, items[i].name, items[i].link, items[i].target, items[i].open_yn, items[i].icon);
 		}
-	}
+		setAccNav();
+		try { $("#lnb_contents").mCustomScrollbar("update"); } catch(e) {}
+	}).fail(function() {
+		alert("메뉴를 불러오는 중 오류가 발생했습니다.");
+	});
+
 	return false;
 }
 
-var timerTimeObj;
-Date.prototype.format = function(f) {
-    if (!this.valueOf()) return " ";
- 
-    var weekName = ["일", "월", "화", "수", "목", "금", "토"];
-    var d = this;
-     
-    return f.replace(/(yyyy|yy|MM|dd|E|hh|mm|ss|a\/p)/gi, function($1) {
-        switch ($1) {
-            case "yyyy": return d.getFullYear();
-            case "yy": return (d.getFullYear() % 1000).zf(2);
-            case "MM": return (d.getMonth() + 1).zf(2);
-            case "dd": return d.getDate().zf(2);
-            case "E": return weekName[d.getDay()];
-            case "HH": return d.getHours().zf(2);
-            case "hh": return ((h = d.getHours() % 12) ? h : 12).zf(2);
-            case "mm": return d.getMinutes().zf(2);
-            case "ss": return d.getSeconds().zf(2);
-            case "a/p": return d.getHours() < 12 ? "오전" : "오후";
-            default: return $1;
-        }
-    });
-};
- 
-String.prototype.string = function(len){var s = '', i = 0; while (i++ < len) { s += this; } return s;};
-String.prototype.zf = function(len){return "0".string(len - this.length) + this;};
-Number.prototype.zf = function(len){return this.toString().zf(len);};
-
 $(document).ready(function() {
+	document.getElementById("_Main").src = "../main/index.jsp";
+
+	$("#lnb_contents").mCustomScrollbar({
+		autoHideScrollbar: true,
+		theme: "minimal-dark",
+		scrollInertia: 0
+	});
+
 	go(null, "{{mid}}", "{{lnb}}");
+
 	$("#top_menu li a").each(function() {
 		$(this).html($(this).html().replace("관리", "<span class=\"top_menu_manage\">관리</span>"));
 	});

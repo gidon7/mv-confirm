@@ -1,466 +1,457 @@
-<!-- <table cellpadding="0" cellspacing="0"> -->
-<!-- tr>
-	<td>
-		<fieldset>
-			<legend>서비스 현황</legend>
-			<div style="z-index:998; position:absolute; background-color:#dddddd; width:878px; height:200px; text-align:center; font-size:36px; opacity: 0.7; filter:alpha(opacity:'70'); font-weight:bold;" z-index="998">
-				<br><br>개발중입니다.
-			</div>
-			<table style="width:100%;" cellpadding="0" cellspacing="0">
-			<colgroup><col width="30"><col width="180"><col width="10"><col width="180"><col width="44"><col></colgroup>
-			<tr>
-				<td></td>
-				<td id="chartArea1"></td>
-				<td></td>
-				<td id="chartArea2"></td>
-				<td></td>
-				<td>
-					<table class="t_tb01" style="width:100%; height:200px; text-align:center;" cellpadding="0" cellspacing="0">
-					<tr>
-						<td class="t_th01">서비스 명</td>
-						<td class="t_td01">맑은이러닝호스팅</td>
-					</tr>
-					<tr>
-						<td class="t_th01">서비스 기간</td>
-						<td class="t_td01">0000.00.00 - 0000.00.00</td>
-					</tr>
-					<tr>
-						<td class="t_th01">트래픽 사용량</td>
-						<td class="t_td01">72.1% (72.1G / 100G)</td>
-					</tr>
-					<tr>
-						<td class="t_th01">디스크 사용량</td>
-						<td class="t_td01">65.8% (658G / 1000G)</td>
-					</tr>
-					</table>
-				</td>
-			</tr>
-			</table>
-		</fieldset>
-	</td>
-</tr -->
 <style type="text/css">
 #master-get-ftp { font-family: "Lucida Console", "Courier New", monospace; font-size: 13px; letter-spacing: 0; color: var(--text-base); }
+
+/* ── 알림 배너 ── */
+.dash-alerts { display: flex; flex-direction: column; gap: 8px; margin-bottom: 18px; }
+.dash-alert { display: flex; align-items: center; justify-content: space-between; padding: 11px 16px; border-radius: var(--radius); font-size: 13px; border-left: 4px solid; }
+.dash-alert.blue   { background: var(--primary-light); border-color: var(--primary); }
+.dash-alert.yellow { background: var(--warning-light);  border-color: var(--warning); }
+.dash-alert.red    { background: var(--danger-light);   border-color: var(--danger); }
+.dash-alert h1     { font-size: 13px; font-weight: 400; margin: 0; }
+.dash-alert em     { font-style: normal; font-weight: 700; }
+.dash-alert.yellow em { color: var(--warning); }
+.dash-alert.red    em { color: var(--danger); }
+
+/* ── 스탯 카드 ── */
+.dash-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 18px; }
+.dash-stat  { background: #fff; border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow-sm); padding: 16px 18px; position: relative; overflow: hidden; }
+.dash-stat::before { content:""; position: absolute; top: 0; left: 0; width: 4px; height: 100%; }
+.dash-stat.blue::before   { background: var(--primary); }
+.dash-stat.yellow::before { background: var(--warning); }
+.dash-stat.red::before    { background: var(--danger); }
+.dash-stat.gray::before   { background: var(--text-muted); }
+.dash-stat .ds-label { font-size: 12px; color: var(--text-muted); font-weight: 500; margin-bottom: 6px; }
+.dash-stat .ds-value { font-size: 22px; font-weight: 700; color: var(--text-base); line-height: 1.1; margin-bottom: 3px; }
+.dash-stat .ds-sub   { font-size: 12px; color: var(--text-light); }
+.dash-stat .ds-icon  { position: absolute; right: 14px; top: 50%; transform: translateY(-50%); font-size: 28px; color: var(--border-dark); }
+.dash-stat a { color: inherit; text-decoration: none; }
+.dash-stat a:hover .ds-value { color: var(--primary); }
+
+/* ── 2컬럼 그리드 ── */
+.dash-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+.dash-card { background: #fff; border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow-sm); overflow: hidden; margin-bottom: 16px; }
+.dash-card-header { display: flex; align-items: center; justify-content: space-between; padding: 11px 16px; border-bottom: 1px solid var(--border); background: var(--bg-th); }
+.dash-card-title  { font-weight: 700; font-size: 14px; color: var(--text-base); }
+
+/* ── 과정 현황 미니 그리드 ── */
+.course-stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--border); }
+.cs-item { background: #fff; padding: 20px 16px; text-align: center; }
+.cs-item .cs-n  { font-size: 30px; font-weight: 700; line-height: 1.1; }
+.cs-item .cs-l  { font-size: 12px; color: var(--text-muted); margin-top: 4px; }
+.cs-item.open   .cs-n { color: var(--success); }
+.cs-item.wait   .cs-n { color: var(--warning); }
+.cs-item.stop   .cs-n { color: var(--text-muted); }
+.cs-item.finish .cs-n { color: var(--text-light); }
+.cs-item a { color: inherit; text-decoration: none; }
+
+/* ── 차트 ── */
+.dash-chart-wrap { padding: 16px; position: relative; height: 230px; }
+
+/* ── 목록 ── */
+.dash-list { list-style: none; margin: 0; padding: 0; }
+.dash-list li { display: flex; align-items: center; gap: 10px; padding: 9px 16px; border-bottom: 1px solid var(--border); font-size: 13px; }
+.dash-list li:last-child { border-bottom: none; }
+.dash-list .dl-title { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.dash-list .dl-date  { color: var(--text-light); font-size: 12px; white-space: nowrap; }
+.dash-list .dl-badge { white-space: nowrap; }
+.dash-list a { color: var(--text-base); text-decoration: none; }
+.dash-list a:hover { color: var(--primary); }
+.dash-list-empty { padding: 30px 16px; text-align: center; color: var(--text-light); font-size: 13px; }
+
+.cate01 { color: var(--text-muted); font-size: 12px; }
 </style>
 
 <form name="form1">
-<div id="dashboard01">
-<ul>
-	<!--@if(user_master_block)-->
-	<li class="w2">
-		<table class="c_tb01" cellpadding="0" cellspacing="0">
-		<tr>
-			<td class="c_th01">마스터ID 사이트관리</td>
-			<td class="c_td01"></td>
-		</tr>
-		</table>
 
-		<table class="t_tb01" cellpadding="0" cellspacing="0" style="table-layout:fixed;">
-		<colgroup><col width="100"><col><col width="100"><col></colgroup>
-		<tr>
-			<td class="t_th01">고객사</td>
-			<td class="t_td01">
-				<select id="master-slogin">
-					<!--@loop(sites)-->
-					<option value="{{sites.id}}" data-domain="{{sites.domain}}"> {{sites.site_nm}} <!--@nif(sites.name_equal_block)-->({{sites.company_nm}})<!--/nif(sites.name_equal_block)--> </option>
-					<!--/loop(sites)-->
-				</select>
-			</td>
-			<td class="t_th01">사용자단 상태</td>
-			<td class="t_td01">
-				{{master_info.site_status_conv}}
-				<!--@if(master_info.is_prepare)-->
-				<!--/if(master_info.is_prepare)-->
-			</td>
-		</tr>
-		<tr>
-			<td class="t_th01">오픈여부</td>
-			<td class="t_td01">
-				준비중 <label class="switch01"><input type="checkbox" name="open_yn" value="Y" onclick="return setPrepare(this.checked);"></label> 오픈
-			</td>
-			<td class="t_th01">FTP 정보</td>
-			<td class="t_td01">
-				<span id="master-get-ftp"><button type="button" class="btn_simp" onclick="getFtp();">정보 가져오기</button></span>
-				<span id="master-get-ftp-msg"></span>
-			</td>
-		</tr>
-		</table>
-	</li>
-	<script>
-		$(document).ready(function() {
-			$('#master-slogin').on('change', function() {
-				$(this).attr('readonly', 'readonly');
-				$.get('../site/call_master_slogin.jsp?sid=' + $(this).val(), function(data) {
-					$(this).removeAttr('readonly');
-					var result = data.split('|');
-					if(result[0] == 'error') { alert(result[1]); return; }
-					else if(result[0] == 'success') { top.location.href = 'http://' + $('#master-slogin').find('option:selected').data('domain') + '/sysop/main/slogin.jsp?' + result[1]; return; }
-				});
-			})
-		});
-	function getFtp() {
-		$.get('../site/call_ftp_view.jsp', function(data) {
+<!-- ───────── 마스터 사이트관리 ───────── -->
+<!--@if(user_master_block)-->
+<div class="dash-card" style="margin-bottom:16px;">
+	<div class="dash-card-header">
+		<span class="dash-card-title"><i class="fa fa-cogs"></i> 마스터ID 사이트관리</span>
+	</div>
+	<table class="t_tb01" cellpadding="0" cellspacing="0" style="table-layout:fixed; border:none; box-shadow:none; margin:0; border-radius:0;">
+	<colgroup><col width="110"><col><col width="110"><col></colgroup>
+	<tr>
+		<td class="t_th01">고객사</td>
+		<td class="t_td01">
+			<select id="master-slogin">
+				<!--@loop(sites)-->
+				<option value="{{sites.id}}" data-domain="{{sites.domain}}"> {{sites.site_nm}} <!--@nif(sites.name_equal_block)-->({{sites.company_nm}})<!--/nif(sites.name_equal_block)--> </option>
+				<!--/loop(sites)-->
+			</select>
+		</td>
+		<td class="t_th01">사용자단 상태</td>
+		<td class="t_td01">{{master_info.site_status_conv}}</td>
+	</tr>
+	<tr>
+		<td class="t_th01">오픈여부</td>
+		<td class="t_td01">
+			준비중 <label class="switch01"><input type="checkbox" name="open_yn" value="Y" onclick="return setPrepare(this.checked);"></label> 오픈
+		</td>
+		<td class="t_th01">FTP 정보</td>
+		<td class="t_td01">
+			<span id="master-get-ftp"><button type="button" class="btn_simp" onclick="getFtp();">정보 가져오기</button></span>
+			<span id="master-get-ftp-msg"></span>
+		</td>
+	</tr>
+	</table>
+</div>
+<script>
+$(document).ready(function() {
+	$('#master-slogin').on('change', function() {
+		$(this).attr('readonly', 'readonly');
+		$.get('../site/call_master_slogin.jsp?sid=' + $(this).val(), function(data) {
+			$(this).removeAttr('readonly');
 			var result = data.split('|');
-			if(result[0] == 'error') { $('#master-get-ftp-msg').show().html(result[1]); return; }
-			else if(result[0] == 'success') { $('#master-get-ftp').html(result[1]); $('#master-get-ftp-msg').hide(); return; }
+			if(result[0] == 'error') { alert(result[1]); return; }
+			else if(result[0] == 'success') { top.location.href = 'http://' + $('#master-slogin').find('option:selected').data('domain') + '/sysop/main/slogin.jsp?' + result[1]; return; }
 		});
-	}
-	function setPrepare(v) {
-		if(!confirm('사용자단을 ' + (v ? '오픈' : '준비중') + ' 상태로 변경하시겠습니까?')) return false;
-		$.get('../site/call_prepare_modify.jsp?v=' + (v ? 'N' : 'Y'), function(data) {
-			var result = data.split('|');
-			if(result[0] == 'error') { alert(result[1]); document.forms['form1']['open_yn'].checked = !v; return; }
-			else if(result[0] == 'success') { alert(('Y' == result[1] ? '준비중' : '오픈') + ' 상태로 변경되었습니다.'); return; }
-		});
-		return true;
-	}
-	</script>
-	<!--/if(user_master_block)-->
+	});
+});
+function getFtp() {
+	$.get('../site/call_ftp_view.jsp', function(data) {
+		var result = data.split('|');
+		if(result[0] == 'error') { $('#master-get-ftp-msg').show().html(result[1]); return; }
+		else if(result[0] == 'success') { $('#master-get-ftp').html(result[1]); $('#master-get-ftp-msg').hide(); return; }
+	});
+}
+function setPrepare(v) {
+	if(!confirm('사용자단을 ' + (v ? '오픈' : '준비중') + ' 상태로 변경하시겠습니까?')) return false;
+	$.get('../site/call_prepare_modify.jsp?v=' + (v ? 'N' : 'Y'), function(data) {
+		var result = data.split('|');
+		if(result[0] == 'error') { alert(result[1]); document.forms['form1']['open_yn'].checked = !v; return; }
+		else if(result[0] == 'success') { alert(('Y' == result[1] ? '준비중' : '오픈') + ' 상태로 변경되었습니다.'); return; }
+	});
+	return true;
+}
+</script>
+<!--/if(user_master_block)-->
 
-	<!--@if(notice_block)-->
-	<li class="w2" id="reminder_notice">
-		<div class="reminder01 blue more" style="cursor:default;">
-			<h1 title="{{notice.subject}}"><strong>{{notice.subject}}</strong></h1>
-			<button type="button" class="bttn2 blue" onclick="callNoticeRead('{{notice.id}}');">확인</button>
-			
-			<div style="margin:10px 0;">{{notice.content}}</div>
-		</div>
-	</li>
-	<!--/if(notice_block)-->
-
-	<!--@nif(confirm_cnt_conv:0)-->
-	<li class="w2">
-		<div class="reminder01 yellow more" onclick="location.href = '../course/user_list.jsp?s_status=0';">
-			<h1>수강생 <em>{{confirm_cnt_conv}}명</em>의 수강승인이 필요합니다.</h1>
-			<button type="button" class="bttn2 yellow" onclick="location.href = '../course/user_list.jsp?s_status=0';">자세히</button>
-		</div>
-	</li>
-	<!--/nif(confirm_cnt_conv:0)-->
-
+<!-- ───────── 알림 배너 ───────── -->
+<div class="dash-alerts">
+<!--@if(notice_block)-->
+<div class="dash-alert blue" id="reminder_notice">
+	<h1><i class="fa fa-bullhorn"></i>&nbsp; <strong>{{notice.subject}}</strong></h1>
+	<button type="button" class="bttn2 blue" onclick="callNoticeRead('{{notice.id}}');">확인</button>
+</div>
+<!--/if(notice_block)-->
+<!--@nif(confirm_cnt_conv:0)-->
+<div class="dash-alert yellow">
+	<h1><i class="fa fa-user-plus"></i>&nbsp; 수강생 <em>{{confirm_cnt_conv}}명</em>의 수강승인이 필요합니다.</h1>
+	<button type="button" class="bttn2 yellow" onclick="location.href='../course/user_list.jsp?s_status=0';">바로가기</button>
+</div>
+<!--/nif(confirm_cnt_conv:0)-->
 <!--@if(admin_block)-->
-	<!--@nif(user_out_cnt_conv:0)-->
-	<li class="w2">
-		<div class="reminder01 yellow more" onclick="location.href = '../user/out_list.jsp';">
-			<h1>탈퇴회원 <em>{{user_out_cnt_conv}}명</em>의 개인정보를 보유중입니다.</h1>
-			<button type="button" class="bttn2 yellow" onclick="location.href = '../user/out_list.jsp';">자세히</button>
-		</div>
-	</li>
-	<!--/nif(user_out_cnt_conv:0)-->
-	<!--@nif(deposit_cnt_conv:0)-->
-	<li class="w2">
-		<div class="reminder01 red more" onclick="location.href = '../order/order_list.jsp?s_method=90&s_status=2';">
-			<h1>주문 <em>{{deposit_cnt_conv}}건</em>의 입금확인이 필요합니다.</h1>
-			<button type="button" class="bttn2 red" onclick="location.href = '../order/order_list.jsp?s_method=90&s_status=2';">자세히</button>
-		</div>
-	</li>
-	<!--/nif(deposit_cnt_conv:0)-->
-	<!--@nif(refund_cnt_conv:0)-->
-	<li class="w2">
-		<div class="reminder01 red more" onclick="location.href = '../order/refund_list.jsp?s_status=1';">
-			<h1>주문 <em>{{refund_cnt_conv}}건</em>의 환불처리가 필요합니다.</h1>
-			<button type="button" class="bttn2 red" onclick="location.href = '../order/refund_list.jsp?s_status=1';">자세히</button>
-		</div>
-	</li>
-	<!--/nif(refund_cnt_conv:0)-->
-	<!--@nif(delivery_cnt_conv:0)-->
-	<li class="w2">
-		<div class="reminder01 red more" onclick="location.href = '../order/delivery_list.jsp?s_status=1';">
-			<h1>주문 <em>{{delivery_cnt_conv}}건</em>이 결제완료 및 배송대기/배송준비중 상태입니다.</h1>
-			<button type="button" class="bttn2 red" onclick="location.href = '../order/delivery_list.jsp?s_status=1';">자세히</button>
-		</div>
-	</li>
-	<!--/nif(delivery_cnt_conv:0)-->
-	<li>
-		<table class="c_tb01" cellpadding="0" cellspacing="0">
-		<tr>
-			<td class="c_th01">당월 매출정보</td>
-			<td class="c_td01"></td>
-		</tr>
-		</table>
-
-		<table class="t_tb01" cellpadding="0" cellspacing="0">
-		<colgroup><col width="100"><col width="200"><col width="100"><col width="200"></colgroup>
-		<tr>
-			<td class="t_th01">입금대기</td>
-			<td class="t_td01" style="text-align:right;"><a href="/sysop/order/order_list.jsp?s_sdate={{sdate}}&s_edate={{edate}}&s_status=2">{{cnt_wait}}건</a></td>
-			<td class="t_th01">입금대기금액</td>
-			<td class="t_td01" style="text-align:right;"><a href="/sysop/order/order_list.jsp?s_sdate={{sdate}}&s_edate={{edate}}&s_status=2">{{sum_wait}}원</a></td>
-		</tr>
-		<tr>
-			<td class="t_th01">결제취소</td>
-			<td class="t_td01" style="text-align:right;"><a href="/sysop/order/order_list.jsp?s_sdate={{sdate}}&s_edate={{edate}}&s_status=-2">{{cnt_cancel}}건</a></td>
-			<td class="t_th01">취소금액</td>
-			<td class="t_td01" style="text-align:right;"><a href="/sysop/order/order_list.jsp?s_sdate={{sdate}}&s_edate={{edate}}&s_status=-2">{{sum_cancel}}원</a></td>
-		</tr>
-		<tr>
-			<td class="t_th01">결제완료</td>
-			<td class="t_td01" style="text-align:right;"><a href="/sysop/order/order_list.jsp?s_sdate={{sdate}}&s_edate={{edate}}&s_status=1">{{cnt_done}}건</a></td>
-			<td class="t_th01">매출금액</td>
-			<td class="t_td01" style="text-align:right;"><a href="/sysop/order/order_list.jsp?s_sdate={{sdate}}&s_edate={{edate}}&s_status=1">{{sum_done}}원</a></td>
-		</tr>
-		<tr>
-			<td class="t_th01">환불완료</td>
-			<td class="t_td01" style="text-align:right;"><a href="/sysop/stat/refund_day.jsp">{{stat_refund.cnt_conv}}건</a></td>
-			<td class="t_th01">환불금액</td>
-			<td class="t_td01" style="text-align:right;"><a href="/sysop/stat/refund_day.jsp">{{stat_refund.price_conv}}원</a></td>
-		</tr>
-		</table>
-	</li>
-
-	<li>
-		<table class="c_tb01" cellpadding="0" cellspacing="0">
-		<tr>
-			<td class="c_th01">과정개설현황</td>
-			<td class="c_td01"><button type="button" class="btn_simp" onclick="location.href = '../course/course_list.jsp';">자세히</button></td>
-		</tr>
-		</table>
-
-		<table class="t_tb01" cellpadding="0" cellspacing="0">
-			<tr>
-				<td class="t_th01">대기과정</td>
-				<td class="t_td01">{{wait_course_cnt}}건</td>
-			</tr>
-			<tr>
-				<td class="t_th01">개설과정</td>
-				<td class="t_td01">{{open_course_cnt}}건 (정규 {{open_r_course_cnt}} / 상시 {{open_a_course_cnt}})</td>
-			</tr>
-			<tr>
-				<td class="t_th01">숨김과정</td>
-				<td class="t_td01">{{stop_course_cnt}}건</td>
-			</tr>
-			<tr>
-				<td class="t_th01">종료과정</td>
-				<td class="t_td01">{{finish_course_cnt}}건</td>
-			</tr>
-		</table>
-	</li>
+<!--@nif(user_out_cnt_conv:0)-->
+<div class="dash-alert yellow">
+	<h1><i class="fa fa-user-times"></i>&nbsp; 탈퇴회원 <em>{{user_out_cnt_conv}}명</em>의 개인정보를 보유중입니다.</h1>
+	<button type="button" class="bttn2 yellow" onclick="location.href='../user/out_list.jsp';">바로가기</button>
+</div>
+<!--/nif(user_out_cnt_conv:0)-->
+<!--@nif(deposit_cnt_conv:0)-->
+<div class="dash-alert red">
+	<h1><i class="fa fa-credit-card"></i>&nbsp; 주문 <em>{{deposit_cnt_conv}}건</em>의 입금확인이 필요합니다.</h1>
+	<button type="button" class="bttn2 red" onclick="location.href='../order/order_list.jsp?s_method=90&s_status=2';">바로가기</button>
+</div>
+<!--/nif(deposit_cnt_conv:0)-->
+<!--@nif(refund_cnt_conv:0)-->
+<div class="dash-alert red">
+	<h1><i class="fa fa-undo"></i>&nbsp; 주문 <em>{{refund_cnt_conv}}건</em>의 환불처리가 필요합니다.</h1>
+	<button type="button" class="bttn2 red" onclick="location.href='../order/refund_list.jsp?s_status=1';">바로가기</button>
+</div>
+<!--/nif(refund_cnt_conv:0)-->
+<!--@nif(delivery_cnt_conv:0)-->
+<div class="dash-alert red">
+	<h1><i class="fa fa-truck"></i>&nbsp; 주문 <em>{{delivery_cnt_conv}}건</em>이 배송대기/배송준비중 상태입니다.</h1>
+	<button type="button" class="bttn2 red" onclick="location.href='../order/delivery_list.jsp?s_status=1';">바로가기</button>
+</div>
+<!--/nif(delivery_cnt_conv:0)-->
 <!--/if(admin_block)-->
+</div>
 
 <!--@if(admin_block)-->
-	<li class="w2">
-		<table class="c_tb01" cellpadding="0" cellspacing="0">
-		<tr>
-			<td class="c_th01">맑은이러닝 공지사항</td>
-			<td class="c_td01"><button type="button" class="btn_simp" onclick="location.href = '../notice/notice_list.jsp';">상세보기</button></td>
-		</tr>
-		</table>
 
-		<table class="l_tb01" cellpadding="0" cellspacing="0" style="table-layout:fixed;">
-		<colgroup><col width="150"><col><col width="150"></colgroup>
-		<thead>
-		<tr>
-			<td class="l_th03">카테고리</td>
-			<td class="l_th03">제목</td>
-			<td class="l_th03">작성일</td>
-		</tr>
-		</thead>
-		<tbody>
-		<!--@loop(notices)-->
-		<tr style="text-align:center;">
-			<td class="l_td01">{{notices.category_conv}}</td>
+<!-- ───────── 매출 스탯 카드 4개 ───────── -->
+<div class="dash-stats">
+	<div class="dash-stat blue">
+		<div class="ds-label">결제완료 (당월)</div>
+		<div class="ds-value"><a href="/sysop/order/order_list.jsp?s_sdate={{sdate}}&s_edate={{edate}}&s_status=1">{{cnt_done}}건</a></div>
+		<div class="ds-sub"><a href="/sysop/order/order_list.jsp?s_sdate={{sdate}}&s_edate={{edate}}&s_status=1">{{sum_done}}원</a></div>
+		<i class="fa fa-check-circle ds-icon"></i>
+	</div>
+	<div class="dash-stat yellow">
+		<div class="ds-label">입금대기 (당월)</div>
+		<div class="ds-value"><a href="/sysop/order/order_list.jsp?s_sdate={{sdate}}&s_edate={{edate}}&s_status=2">{{cnt_wait}}건</a></div>
+		<div class="ds-sub"><a href="/sysop/order/order_list.jsp?s_sdate={{sdate}}&s_edate={{edate}}&s_status=2">{{sum_wait}}원</a></div>
+		<i class="fa fa-clock-o ds-icon"></i>
+	</div>
+	<div class="dash-stat red">
+		<div class="ds-label">결제취소 (당월)</div>
+		<div class="ds-value"><a href="/sysop/order/order_list.jsp?s_sdate={{sdate}}&s_edate={{edate}}&s_status=-2">{{cnt_cancel}}건</a></div>
+		<div class="ds-sub"><a href="/sysop/order/order_list.jsp?s_sdate={{sdate}}&s_edate={{edate}}&s_status=-2">{{sum_cancel}}원</a></div>
+		<i class="fa fa-times-circle ds-icon"></i>
+	</div>
+	<div class="dash-stat gray">
+		<div class="ds-label">환불완료 (당월)</div>
+		<div class="ds-value"><a href="/sysop/stat/refund_day.jsp">{{stat_refund.cnt_conv}}건</a></div>
+		<div class="ds-sub"><a href="/sysop/stat/refund_day.jsp">{{stat_refund.price_conv}}원</a></div>
+		<i class="fa fa-reply ds-icon"></i>
+	</div>
+</div>
+
+<!-- ───────── 차트 + 과정개설현황 ───────── -->
+<div class="dash-grid">
+	<div class="dash-card" style="margin-bottom:0;">
+		<div class="dash-card-header">
+			<span class="dash-card-title">당월 주문 현황</span>
+			<span style="font-size:12px; color:var(--text-light);">{{sdate}} ~ {{edate}}</span>
+		</div>
+		<div class="dash-chart-wrap">
+			<canvas id="orderChart"></canvas>
+		</div>
+	</div>
+	<div class="dash-card" style="margin-bottom:0;">
+		<div class="dash-card-header">
+			<span class="dash-card-title">과정개설현황</span>
+			<button type="button" class="btn_simp" onclick="location.href='../course/course_list.jsp';">자세히</button>
+		</div>
+		<div class="course-stat-grid">
+			<div class="cs-item open">
+				<div class="cs-n"><a href="../course/course_list.jsp?s_status=1">{{open_course_cnt}}</a></div>
+				<div class="cs-l">개설과정<br><span style="font-size:11px; color:var(--text-light);">정규 {{open_r_course_cnt}} / 상시 {{open_a_course_cnt}}</span></div>
+			</div>
+			<div class="cs-item wait">
+				<div class="cs-n"><a href="../course/course_list.jsp?s_status=0">{{wait_course_cnt}}</a></div>
+				<div class="cs-l">대기과정</div>
+			</div>
+			<div class="cs-item stop">
+				<div class="cs-n"><a href="../course/course_list.jsp?s_status=3">{{stop_course_cnt}}</a></div>
+				<div class="cs-l">숨김과정</div>
+			</div>
+			<div class="cs-item finish">
+				<div class="cs-n"><a href="../course/course_list.jsp?s_status=2">{{finish_course_cnt}}</a></div>
+				<div class="cs-l">종료과정</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!-- ───────── 공지사항 ───────── -->
+<div class="dash-card">
+	<div class="dash-card-header">
+		<span class="dash-card-title">맑은이러닝 공지사항</span>
+		<button type="button" class="btn_simp" onclick="location.href='../notice/notice_list.jsp';">상세보기</button>
+	</div>
+	<!--@if(notices)-->
+	<ul class="dash-list">
+	<!--@loop(notices)-->
+	<li>
+		<span class="dl-badge"><span class="label gray">{{notices.category_conv}}</span></span>
+		<span class="dl-title">
 			<!--@nif(notices.new_block)-->
-			<td class="l_td01" title="{{notices.subject}}" style="text-align:left;">
-				<a href="/sysop/notice/notice_read.jsp?id={{notices.id}}">{{notices.subject_conv}}</a>
-			</td>
+			<a href="/sysop/notice/notice_read.jsp?id={{notices.id}}">{{notices.subject_conv}}</a>
 			<!--/nif(notices.new_block)-->
 			<!--@if(notices.new_block)-->
-			<td class="l_td01" title="{{notices.subject}}" style="text-align:left; font-weight:bold;">
-				<a href="/sysop/notice/notice_read.jsp?id={{notices.id}}">{{notices.subject_conv}}</a>
-				<img src="../html/images/admin/icon/ico_new.gif" align="absmiddle">
-			</td>
+			<a href="/sysop/notice/notice_read.jsp?id={{notices.id}}" style="font-weight:700;">{{notices.subject_conv}}</a> <span class="label red small">NEW</span>
 			<!--/if(notices.new_block)-->
-			<td class="l_td01">{{notices.reg_date_conv}}</td>
-		</tr>
-		<!--/loop(notices)-->
-		</tbody>
-		</table>
-		<!--@nif(notices)-->
-		<table class="n_tb01" cellpadding="0" cellspacing="0" style="height:50px;">
-		<tr>
-			<td class="n_th01">맑은이러닝 공지사항이 없습니다.</td>
-		</tr>
-		</table>
-		<!--/nif(notices)-->
+		</span>
+		<span class="dl-date">{{notices.reg_date_conv}}</span>
 	</li>
+	<!--/loop(notices)-->
+	</ul>
+	<!--/if(notices)-->
+	<!--@nif(notices)-->
+	<div class="dash-list-empty">맑은이러닝 공지사항이 없습니다.</div>
+	<!--/nif(notices)-->
+</div>
 
-	<li class="w2">
-		<table class="c_tb01" cellpadding="0" cellspacing="0">
-		<tr>
-			<td class="c_th01">Q&A 및 과정Q&A<!--@nif(qnas_size:0)--> (최근 {{qnas_size}}건)<!--/nif(qnas_size:0)--></td>
-			<td class="c_td01"></td>
-		</tr>
-		</table>
-
-		<table class="l_tb01" cellpadding="0" cellspacing="0" style="table-layout:fixed;">
-		<colgroup><col><col width="170"><col width="80"><col width="170"><col width="70"></colgroup>
-		<thead>
-		<tr>
-			<td class="l_th03">제목</td>
-			<td class="l_th03">작성자</td>
-			<td class="l_th03">등록일</td>
-			<td class="l_th03">담당자</td>
-			<td class="l_th03">답변상태</td>
-		</tr>
-		</thead>
-		<tbody>
-		<!--@loop(qnas)-->
-		<tr style="text-align:center;">
-			<td class="l_td01" align="left" title="{{qnas.subject}}">
-				<!--@if(qnas.course_user_id:0)-->
-				<a href="../board/index.jsp?code={{qnas.code}}"><span class="label gray">{{qnas.board_nm}}</span>
-				<a href="../board/read.jsp?id={{qnas.id}}&code={{qnas.code}}">
-				<!--/if(qnas.course_user_id:0)-->
-				<!--@nif(qnas.course_user_id:0)-->
-				<a href="../course/post_list.jsp?code={{qnas.code}}&s_course_id={{qnas.course_id}}"><span class="label sky">{{qnas.board_nm}} 과정</span>
-				<a href="../course/post_view.jsp?id={{qnas.id}}&bid={{qnas.board_id}}&code={{qnas.code}}">
-				<!--/nif(qnas.course_user_id:0)-->
-					<!--@if(qnas.category_nm)--><span class="cate01">[{{qnas.category_nm}}]</span><!--/if(qnas.category_nm)-->
-					<!--@if(qnas.secret_yn)-->
-					<img src="/sysop/html/images/admin/icon/lock.gif" alt="비밀글" align="absmiddle">
-					<!--/if(qnas.secret_yn)-->
-					{{qnas.subject}}
-				</a>
-				<!--@if(qnas.new_block)-->
-				<img src="../html/images/admin/icon/ico_new.gif" align="absmiddle">
-				<!--/if(qnas.new_block)-->
-			</td>
-			<td class="l_td01" align="left"><span class="crm" _id="{{qnas.user_id}}">{{qnas.writer}} ({{qnas.login_id}})</span></td>
-			<td class="l_td01">{{qnas.reg_date_conv}}</td>
-			<td class="l_td01" align="left">
-				<!--@if(qnas.course_user_id:0)-->
-					<!--@if(qnas.assign_id)-->{{qnas.assign_nm}} ({{qnas.assign_login_id}})<!--/if(qnas.assign_id)-->
-					<!--@nif(qnas.assign_id)-->-<!--/nif(qnas.assign_id)-->
-				<!--/if(qnas.course_user_id:0)-->
-				<!--@nif(qnas.course_user_id:0)-->과정담당자<!--/nif(qnas.course_user_id:0)-->
-			</td>
-			<td class="l_td01"><span class="label">{{qnas.proc_status_conv}}</span></td>
-		</tr>
-		<!--/loop(qnas)-->
-		</tbody>
-		</table>
-		<!--@nif(qnas)-->
-		<table class="n_tb01" cellpadding="0" cellspacing="0">
-		<tr>
-			<td class="n_th01">등록된 Q&A가 없습니다.</td>
-		</tr>
-		</table>
-		<!--/nif(qnas)-->
+<!-- ───────── Q&A ───────── -->
+<div class="dash-card">
+	<div class="dash-card-header">
+		<span class="dash-card-title">Q&A 및 과정Q&A<!--@nif(qnas_size:0)--> (최근 {{qnas_size}}건)<!--/nif(qnas_size:0)--></span>
+	</div>
+	<!--@if(qnas)-->
+	<ul class="dash-list">
+	<!--@loop(qnas)-->
+	<li>
+		<span class="dl-badge">
+			<!--@if(qnas.course_user_id:0)-->
+			<a href="../board/index.jsp?code={{qnas.code}}"><span class="label gray">{{qnas.board_nm}}</span></a>
+			<!--/if(qnas.course_user_id:0)-->
+			<!--@nif(qnas.course_user_id:0)-->
+			<a href="../course/post_list.jsp?code={{qnas.code}}&s_course_id={{qnas.course_id}}"><span class="label sky">{{qnas.board_nm}} 과정</span></a>
+			<!--/nif(qnas.course_user_id:0)-->
+		</span>
+		<span class="dl-title">
+			<!--@if(qnas.course_user_id:0)-->
+			<a href="../board/read.jsp?id={{qnas.id}}&code={{qnas.code}}">
+			<!--/if(qnas.course_user_id:0)-->
+			<!--@nif(qnas.course_user_id:0)-->
+			<a href="../course/post_view.jsp?id={{qnas.id}}&bid={{qnas.board_id}}&code={{qnas.code}}">
+			<!--/nif(qnas.course_user_id:0)-->
+				<!--@if(qnas.category_nm)--><span class="cate01">[{{qnas.category_nm}}]</span> <!--/if(qnas.category_nm)-->{{qnas.subject}}
+				<!--@if(qnas.new_block)--><span class="label red small">NEW</span><!--/if(qnas.new_block)-->
+			</a>
+			<span style="color:var(--text-light); font-size:12px;"> — <span class="crm" _id="{{qnas.user_id}}">{{qnas.writer}}</span></span>
+		</span>
+		<span class="dl-badge"><span class="label">{{qnas.proc_status_conv}}</span></span>
+		<span class="dl-date">{{qnas.reg_date_conv}}</span>
 	</li>
+	<!--/loop(qnas)-->
+	</ul>
+	<!--/if(qnas)-->
+	<!--@nif(qnas)-->
+	<div class="dash-list-empty">등록된 Q&A가 없습니다.</div>
+	<!--/nif(qnas)-->
+</div>
+
+<!-- ───────── 신청기간인 정규과정 ───────── -->
+<div class="dash-card">
+	<div class="dash-card-header">
+		<span class="dash-card-title">신청기간인 정규과정<!--@nif(request_courses_size:0)--> ({{request_courses_size}}건)<!--/nif(request_courses_size:0)--></span>
+		<button type="button" class="btn_simp" onclick="location.href='../course/course_list.jsp?s_req_sdate={{today}}&s_req_edate={{today}}';">자세히</button>
+	</div>
+	<!--@if(request_courses)-->
+	<table class="l_tb01" cellpadding="0" cellspacing="0" style="border-radius:0; border:none; box-shadow:none;">
+	<colgroup><col width="60"><col width="60"><col><col width="190"><col width="70"></colgroup>
+	<thead><tr>
+		<td class="l_th03">ID</td>
+		<td class="l_th03">구분</td>
+		<td class="l_th03">과정명</td>
+		<td class="l_th03">수강신청기간</td>
+		<td class="l_th03">신청인원</td>
+	</tr></thead>
+	<tbody>
+	<!--@loop(request_courses)-->
+	<tr style="text-align:center;">
+		<td class="l_td01">{{request_courses.id}}</td>
+		<td class="l_td01"><span class="label">{{request_courses.onoff_type_conv}}</span></td>
+		<td class="l_td01" align="left">
+			<span class="cate01">[{{request_courses.cate_name}}]</span>
+			<a href="../course/course_modify.jsp?id={{request_courses.id}}">{{request_courses.course_nm}}</a>
+		</td>
+		<td class="l_td01">{{request_courses.request_sdate_conv}} ~ {{request_courses.request_edate_conv}}</td>
+		<td class="l_td01">{{request_courses.user_cnt_conv}}명</td>
+	</tr>
+	<!--/loop(request_courses)-->
+	</tbody>
+	</table>
+	<!--/if(request_courses)-->
+	<!--@nif(request_courses)-->
+	<div class="dash-list-empty">해당 과정이 없습니다.</div>
+	<!--/nif(request_courses)-->
+</div>
+
+<!-- ───────── 학습기간인 정규과정 ───────── -->
+<div class="dash-card">
+	<div class="dash-card-header">
+		<span class="dash-card-title">학습기간인 정규과정<!--@nif(study_courses_size:0)--> ({{study_courses_size}}건)<!--/nif(study_courses_size:0)--></span>
+		<button type="button" class="btn_simp" onclick="location.href='../course/course_list.jsp?s_std_sdate={{today}}&s_std_edate={{today}}';">자세히</button>
+	</div>
+	<!--@if(study_courses)-->
+	<table class="l_tb01" cellpadding="0" cellspacing="0" style="border-radius:0; border:none; box-shadow:none;">
+	<colgroup><col width="60"><col width="60"><col><col width="190"><col width="70"></colgroup>
+	<thead><tr>
+		<td class="l_th03">ID</td>
+		<td class="l_th03">구분</td>
+		<td class="l_th03">과정명</td>
+		<td class="l_th03">학습기간</td>
+		<td class="l_th03">학습인원</td>
+	</tr></thead>
+	<tbody>
+	<!--@loop(study_courses)-->
+	<tr style="text-align:center;">
+		<td class="l_td01">{{study_courses.id}}</td>
+		<td class="l_td01"><span class="label">{{study_courses.onoff_type_conv}}</span></td>
+		<td class="l_td01" align="left">
+			<span class="cate01">[{{study_courses.cate_name}}]</span>
+			<a href="../course/course_modify.jsp?id={{study_courses.id}}">{{study_courses.course_nm}}</a>
+		</td>
+		<td class="l_td01">{{study_courses.study_sdate_conv}} ~ {{study_courses.study_edate_conv}}</td>
+		<td class="l_td01">{{study_courses.user_cnt_conv}}명</td>
+	</tr>
+	<!--/loop(study_courses)-->
+	</tbody>
+	</table>
+	<!--/if(study_courses)-->
+	<!--@nif(study_courses)-->
+	<div class="dash-list-empty">해당 과정이 없습니다.</div>
+	<!--/nif(study_courses)-->
+</div>
+
 <!--/if(admin_block)-->
+
 <!--@if(dept_manager_block)-->
-	<li class="w2">소속관리자 페이지입니다. 소속된 회원의 정보를 관리할 수 있습니다.</li>
+<div class="reminder01">소속관리자 페이지입니다. 소속된 회원의 정보를 관리할 수 있습니다.</div>
 <!--/if(dept_manager_block)-->
 <!--@if(course_manager_block)-->
-	<li class="w2">과정관리자 페이지입니다. 과정을 수강하는 회원의 정보를 관리할 수 있습니다.</li>
+<div class="reminder01">과정관리자 페이지입니다. 과정을 수강하는 회원의 정보를 관리할 수 있습니다.</div>
 <!--/if(course_manager_block)-->
-
-<!--@if(admin_block)-->
-	<li class="w2">
-		<table class="c_tb01" cellpadding="0" cellspacing="0">
-		<tr>
-			<td class="c_th01">신청기간인 정규과정<!--@nif(request_courses_size:0)--> (최근 {{request_courses_size}}건)<!--/nif(request_courses_size:0)--></td>
-			<td class="c_td01"><button type="button" class="btn_simp" onclick="location.href = '../course/course_list.jsp?s_req_sdate={{today}}&s_req_edate={{today}}';">자세히</button></td>
-		</tr>
-		</table>
-
-		<table class="l_tb01" cellpadding="0" cellspacing="0">
-		<colgroup><col width="70"><col width="70"><col><col width="200"><col width="70"></colgroup>
-		<thead>
-		<tr>
-			<td class="l_th03">ID</td>
-			<td class="l_th03">구분</td>
-			<td class="l_th03">과정명</td>
-			<td class="l_th03">수강신청기간</td>
-			<td class="l_th03">신청인원</td>
-		</tr>
-		</thead>
-		<tbody>
-		<!--@loop(request_courses)-->
-		<tr style="text-align:center;">
-			<td class="l_td01">{{request_courses.id}}</td>
-			<td class="l_td01"><span class="label">{{request_courses.onoff_type_conv}}</span></td>
-			<td class="l_td01" align="left" title="{{request_courses.course_nm}}">
-				<span class="fontsmall" style="color:gray;">[{{request_courses.cate_name}}]</span>
-				<a href="../course/course_modify.jsp?id={{request_courses.id}}">{{request_courses.course_nm}}</a>
-			<td class="l_td01">{{request_courses.request_sdate_conv}} - {{request_courses.request_edate_conv}}</td>
-			<td class="l_td01">{{request_courses.user_cnt_conv}}명</td>
-		</tr>
-		<!--/loop(request_courses)-->
-		<!--@nif(request_courses)-->
-		<table class="n_tb01" cellpadding="0" cellspacing="0">
-		<tr>
-			<td class="n_th01">해당 과정이 없습니다.</td>
-		</tr>
-		</table>
-		<!--/nif(request_courses)-->
-		</tbody>
-		</table>
-	</li>
-
-	<li class="w2">
-		<table class="c_tb01" cellpadding="0" cellspacing="0">
-		<tr>
-			<td class="c_th01">학습기간인 정규과정<!--@nif(study_courses_size:0)--> (최근 {{study_courses_size}}건)<!--/nif(study_courses_size:0)--></td>
-			<td class="c_td01"><button type="button" class="btn_simp" onclick="location.href = '../course/course_list.jsp?s_std_sdate={{today}}&s_std_edate={{today}}';">자세히</button></td>
-		</tr>
-		</table>
-
-		<table class="l_tb01" cellpadding="0" cellspacing="0">
-		<colgroup><col width="70"><col width="70"><col><col width="200"><col width="70"></colgroup>
-		<thead>
-		<tr>
-			<td class="l_th03">ID</td>
-			<td class="l_th03">구분</td>
-			<td class="l_th03">과정명</td>
-			<td class="l_th03">학습기간</td>
-			<td class="l_th03">학습인원</td>
-		</tr>
-		</thead>
-		<tbody>
-		<!--@loop(study_courses)-->
-		<tr style="text-align:center;">
-			<td class="l_td01">{{study_courses.id}}</td>
-			<td class="l_td01"><span class="label">{{study_courses.onoff_type_conv}}</span></td>
-			<td class="l_td01" align="left" title="{{study_courses.course_nm}}">
-				<span class="cate01">[{{study_courses.cate_name}}]</span>
-				<a href="../course/course_modify.jsp?id={{study_courses.id}}">{{study_courses.course_nm}}</a>
-			<td class="l_td01">{{study_courses.study_sdate_conv}} - {{study_courses.study_edate_conv}}</td>
-			<td class="l_td01">{{study_courses.user_cnt_conv}}명</td>
-		</tr>
-		<!--/loop(study_courses)-->
-		<!--@nif(study_courses)-->
-		<table class="n_tb01" cellpadding="0" cellspacing="0">
-		<tr>
-			<td class="n_th01">해당 과정이 없습니다.</td>
-		</tr>
-		</table>
-		<!--/nif(study_courses)-->
-		</tbody>
-		</table>
-	</li>
-<!--/if(admin_block)-->
-</ul>
-</div>
 
 </form>
 {{form_script}}
 
+<script src="//cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <script>
 $(function() {
 	setCRM();
 	setLabel();
+	initOrderChart();
 });
+
 function setLabel() {
-	var progresses = { "답변완료" : "blue", "답변대기" : "red", "온라인" : "sky", "집합" : "red", "혼합" : "green", "패키지" : "brown" };
+	var map = { "답변완료":"blue", "답변대기":"red", "온라인":"sky", "집합":"red", "혼합":"green", "패키지":"brown" };
 	$(".label").each(function() {
 		var v = $(this).html();
-		$(this).addClass(progresses[v]);
+		if(map[v]) $(this).addClass(map[v]);
 	});
 }
 
 function callNoticeRead(v) {
 	call("../notice/call_notice_log.jsp?id=" + v + "&type=read", null, function() {
 		$("#reminder_notice").hide();
+	});
+}
+
+function initOrderChart() {
+	var el = document.getElementById('orderChart');
+	if(!el) return;
+	var n = function(s) { return parseInt(String(s).replace(/[^0-9]/g, '')) || 0; };
+	var done   = n('{{cnt_done}}');
+	var wait   = n('{{cnt_wait}}');
+	var cancel = n('{{cnt_cancel}}');
+	if(done + wait + cancel === 0) {
+		el.parentNode.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--text-light);font-size:13px;">당월 주문 데이터가 없습니다.</div>';
+		return;
+	}
+	new Chart(el, {
+		type: 'doughnut',
+		data: {
+			labels: ['결제완료', '입금대기', '결제취소'],
+			datasets: [{
+				data: [done, wait, cancel],
+				backgroundColor: ['#16a34a', '#d97706', '#dc2626'],
+				borderWidth: 2,
+				borderColor: '#fff',
+				hoverOffset: 6
+			}]
+		},
+		options: {
+			responsive: true,
+			maintainAspectRatio: false,
+			cutout: '68%',
+			plugins: {
+				legend: {
+					position: 'bottom',
+					labels: { font: { size: 12, family: "'Pretendard', sans-serif" }, padding: 14, usePointStyle: true }
+				},
+				tooltip: {
+					callbacks: {
+						label: function(ctx) { return '  ' + ctx.label + ': ' + ctx.parsed + '건'; }
+					}
+				}
+			}
+		}
 	});
 }
 </script>

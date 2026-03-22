@@ -39,7 +39,7 @@ if(list.size() == 0) {
 
 
 //출력
-p.setLayout(!"clear".equals(m.rs("mode")) ? "blank" : "clear");
+p.setLayout(!"clear".equals(m.rs("mode")) ? "admin" : "clear");
 p.setBody("main.top");
 
 p.setVar("mid", m.rs("mid"));
