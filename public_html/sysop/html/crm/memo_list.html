@@ -140,7 +140,7 @@
 <style>
 /* 메모 패널 전용 오버라이드 */
 #crm_wrap.crm_memo { height: 100%; }
-#crm_wrap.crm_memo #sys-wrap { padding-top: 46px; }
+#crm_wrap.crm_memo #sys-wrap { padding-top: 50px; }
 #crm_wrap.crm_memo #sys-contents { min-width: inherit !important; padding: 0; }
 #crm_wrap.crm_memo .f_tb01 { margin: 0; }
 #crm_wrap.crm_memo .t_tb01 { border: none; border-radius: 0; box-shadow: none; margin: 0; }
@@ -152,25 +152,27 @@
 
 <script>
 $(document).ready(function() {
-	if(!parent) {
-		$(".fa-angle-up").remove();
-	} else if(46 < $("#_CS", parent.document).height()) {
-		ToggleMemoLayer();
-	}
+	// 초기 상태: 패널이 열린 상태로 로드됨 (parent의 openMemoPanel()이 열어줌)
+	memo_status = "open";
+	$(".fa-angle-down").removeClass("fa-angle-down").addClass("fa-angle-up");
 });
 
-var memo_status = "close";
+var memo_status = "open";
 function ToggleMemoLayer() {
 	if(!parent) return;
 
     if (memo_status == "open") {
+		// 패널 닫기
 		$("#_BODY", parent.document).css("padding-right", "0");
-		$("#_CS", parent.document).css("height", "46px");
+		$("#_CS", parent.document).css("height", "0");
+		$("#cs-btn", parent.document).css("display", "flex");
 		$(".fa-angle-up").removeClass("fa-angle-up").addClass("fa-angle-down");
         memo_status = "close";
     } else {
+		// 패널 열기 (패널 안에서 재열기 시)
 		$("#_BODY", parent.document).css("padding-right", "300px");
 		$("#_CS", parent.document).css("height", "100%");
+		$("#cs-btn", parent.document).css("display", "none");
 		$(".fa-angle-down").removeClass("fa-angle-down").addClass("fa-angle-up");
 		memo_status = "open";
 	}
