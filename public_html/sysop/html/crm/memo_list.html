@@ -11,16 +11,14 @@
 		</div>
 		<div class="crm-memo-header-actions">
 			<!--@if(master_block)-->
+			<!--@if(malgn_office_block)--><!--@if(admin_block)-->
+			<button type="button" class="top_button small white" onclick="if(confirm('현재 로그인된 관리자에서 로그아웃됩니다. 계속하시겠습니까?')) window.open('{{FRONT_URL}}/sysop/main/slogin.jsp?uid={{uid}}&ek={{ek_sysop}}')">
+				[맑]관리
+			</button>
+			<!--/if(admin_block)--><!--/if(malgn_office_block)-->
 			<button type="button" class="top_button small white" onclick="window.open('{{FRONT_URL}}/member/alogin.jsp?ek={{ek}}&id={{login_id}}')">
 				<i class="fa fa-sign-in"></i> 로그인
 			</button>
-			<!--@if(malgn_office_block)--><!--@if(admin_block)-->
-			<div style="position:fixed; top:8px; right:100px; z-index:999;">
-				<button type="button" class="top_button small white" onclick="if(confirm('현재 로그인된 관리자에서 로그아웃됩니다. 계속하시겠습니까?')) window.open('{{FRONT_URL}}/sysop/main/slogin.jsp?uid={{uid}}&ek={{ek_sysop}}')">
-					[맑]관리
-				</button>
-			</div>
-			<!--/if(admin_block)--><!--/if(malgn_office_block)-->
 			<!--/if(master_block)-->
 		</div>
 	</div>
