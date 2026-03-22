@@ -695,6 +695,100 @@ table.a_tb01 .a_td01 { display: table-cell; }
 .w80{width:80px!important}.w90{width:90px!important}.w100{width:100px!important}
 
 /* =====================================================
+   대시보드
+   ===================================================== */
+#dashboard01 { padding: 0; }
+#dashboard01 ul {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+#dashboard01 li {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-sm);
+    overflow: hidden;
+    padding: 0;
+}
+#dashboard01 li.w2 { grid-column: span 2; }
+
+/* 카드 내부 c_tb01 → 카드 헤더 */
+#dashboard01 .c_tb01 {
+    border: none;
+    border-bottom: 1px solid var(--border);
+    border-radius: 0;
+    box-shadow: none;
+    margin: 0;
+}
+#dashboard01 .c_th01 { padding: 12px 16px; font-size: 14px; }
+#dashboard01 .c_td01 { padding: 8px 12px; }
+
+/* 카드 내부 t_tb01 → 깔끔한 info grid */
+#dashboard01 .t_tb01 {
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
+    margin: 0;
+}
+#dashboard01 .t_tb01 .t_th01 {
+    background: #f8fafc;
+    border-left: none;
+    border-right: none;
+    border-top: none;
+    padding: 10px 16px;
+    width: 130px;
+    font-size: 12px;
+}
+#dashboard01 .t_tb01 .t_td01 {
+    border-left: none;
+    border-right: none;
+    border-top: none;
+    padding: 10px 14px;
+    font-size: 13px;
+}
+#dashboard01 .t_tb01 tr:last-child .t_th01,
+#dashboard01 .t_tb01 tr:last-child .t_td01 { border-bottom: none; }
+
+/* 매출 숫자 강조 */
+#dashboard01 .t_tb01 .t_td01 a {
+    font-weight: 600;
+    color: var(--primary);
+    font-size: 14px;
+}
+
+/* 카드 내부 l_tb01 */
+#dashboard01 .l_tb01 {
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
+}
+#dashboard01 .l_th03 { background: #f8fafc; }
+#dashboard01 .l_td01 { border-left: none; border-right: none; }
+#dashboard01 .l_tb01 tbody tr:last-child td { border-bottom: none; }
+
+/* 카드 내부 n_tb01 */
+#dashboard01 .n_tb01 { border: none; border-radius: 0; box-shadow: none; }
+#dashboard01 .n_tb01 td, #dashboard01 .n_td01 { border: none; padding: 24px; border-radius: 0; }
+
+/* reminder01 카드 안에 있을 때 */
+#dashboard01 li > .reminder01 {
+    margin: 0;
+    border-radius: 0;
+    border: none;
+}
+
+/* 소속/과정관리자 안내 텍스트 */
+#dashboard01 li > p,
+#dashboard01 li > span { padding: 20px 16px; display: block; color: var(--text-muted); font-size: 13px; }
+
+/* cate01 */
+.cate01 { color: var(--text-muted); font-size: 12px; }
+
+/* =====================================================
    Drag & Drop 테이블
    ===================================================== */
 .tDnD_whileDrag { background: #dbeafe !important; outline: 2px dashed var(--primary); }
