@@ -1,148 +1,183 @@
-<style type="text/css">
-.qna_ready {color:#ff0000;}
-</style>
+<div class="crm-dashboard">
 
-<table class="c_tb01" cellpadding="0" cellspacing="0">
-<tr>
-	<td class="c_th01">최근 Q&A (총 {{stat.qna_cnt}}건 / <span class="{{stat.qna_class}}">미답변 {{stat.qna_ready_cnt}}건</span>)</td>
-	<td class="c_td01"><button class="btn_simp" onclick="location.href = 'qna_list.jsp?uid={{uid}}';">더보기</button></td>
-</tr>
-</table>
+	<!-- ===== 통계 요약 카드 ===== -->
+	<div class="crm-stat-row">
+		<div class="crm-stat-card">
+			<div class="crm-stat-icon">
+				<i class="fa fa-question-circle"></i>
+			</div>
+			<div class="crm-stat-body">
+				<div class="crm-stat-label">Q&amp;A</div>
+				<div class="crm-stat-value">{{stat.qna_cnt}}</div>
+				<div class="crm-stat-sub"><span class="{{stat.qna_class}}">미답변 {{stat.qna_ready_cnt}}건</span></div>
+			</div>
+			<a href="qna_list.jsp?uid={{uid}}" class="btn_simp">더보기</a>
+		</div>
 
-<table class="l_tb01" cellpadding="0" cellspacing="0">
-<colgroup>
-<col width="40">
-<col width="150">
-<col>
-<col width="110">
-<col width="80">
-</colgroup>
-<thead>
-<tr align="center">
-	<td class="l_th03">No</td>
-	<td class="l_th03">게시판명</td>
-	<td class="l_th03">제목</td>
-	<td class="l_th03">등록일</td>
-	<td class="l_th03">답변상태</td>
-</tr>
-</thead>
+		<div class="crm-stat-card">
+			<div class="crm-stat-icon yellow">
+				<i class="fa fa-comments"></i>
+			</div>
+			<div class="crm-stat-body">
+				<div class="crm-stat-label">과정 Q&amp;A</div>
+				<div class="crm-stat-value">{{stat.cl_qna_cnt}}</div>
+				<div class="crm-stat-sub"><span class="{{stat.cl_qna_class}}">미답변 {{stat.cl_qna_ready_cnt}}건</span></div>
+			</div>
+			<a href="cqna_list.jsp?uid={{uid}}" class="btn_simp">더보기</a>
+		</div>
 
-<tbody>
-<!--@loop(qna_list)-->
-<tr align="center">
-	<td class="l_td01">{{qna_list.__ord}}</td>
-	<td class="l_td01" title="{{qna_list.board}}">{{qna_list.board_nm_conv}}</td>
-	<td class="l_td01" align="left" title="{{qna_list.subject}}">
-		<a href="qna_view.jsp?qid={{qna_list.id}}&uid={{uid}}&{{list_query}}">{{qna_list.subject_conv}}</a>
-	</td>
-	<td class="l_td01">{{qna_list.reg_date_conv}}</td>
-	<td class="l_td01">{{qna_list.proc_status_conv}}</td>
-</tr>
-<!--/loop(qna_list)-->
-</tbody>
-</table>
+		<div class="crm-stat-card">
+			<div class="crm-stat-icon green">
+				<i class="fa fa-book"></i>
+			</div>
+			<div class="crm-stat-body">
+				<div class="crm-stat-label">수강 과정</div>
+				<div class="crm-stat-value">{{stat.course_cnt}}</div>
+				<div class="crm-stat-sub">전체</div>
+			</div>
+			<a href="course_list.jsp?uid={{uid}}" class="btn_simp">더보기</a>
+		</div>
+	</div>
 
-<!--@nif(qna_list)-->
-<table class="n_tb01" cellpadding="0" cellspacing="0">
-<tr>
-	<td>해당 자료가 없습니다.</td>
-</tr>
-</table>
-<!--/nif(qna_list)-->
-<p style="height:10px"></p>
+	<!-- ===== Q&A 2컬럼 섹션 ===== -->
+	<div class="crm-grid-2">
 
+		<!-- 최근 Q&A -->
+		<div class="crm-section-card">
+			<div class="crm-section-header">
+				<span><i class="fa fa-question-circle"></i>최근 Q&amp;A</span>
+			</div>
+			<table class="l_tb01" cellpadding="0" cellspacing="0">
+			<colgroup>
+			<col width="40">
+			<col width="120">
+			<col>
+			<col width="95">
+			<col width="65">
+			</colgroup>
+			<thead>
+			<tr>
+				<td class="l_th03" align="center">No</td>
+				<td class="l_th03">게시판명</td>
+				<td class="l_th03">제목</td>
+				<td class="l_th03" align="center">등록일</td>
+				<td class="l_th03" align="center">답변상태</td>
+			</tr>
+			</thead>
+			<tbody>
+			<!--@loop(qna_list)-->
+			<tr>
+				<td class="l_td01" align="center">{{qna_list.__ord}}</td>
+				<td class="l_td01 l_td_el" title="{{qna_list.board}}">{{qna_list.board_nm_conv}}</td>
+				<td class="l_td01" title="{{qna_list.subject}}">
+					<a href="qna_view.jsp?qid={{qna_list.id}}&uid={{uid}}&{{list_query}}">{{qna_list.subject_conv}}</a>
+				</td>
+				<td class="l_td01" align="center">{{qna_list.reg_date_conv}}</td>
+				<td class="l_td01" align="center">{{qna_list.proc_status_conv}}</td>
+			</tr>
+			<!--/loop(qna_list)-->
+			</tbody>
+			</table>
+			<!--@nif(qna_list)-->
+			<table class="n_tb01" cellpadding="0" cellspacing="0">
+			<tr><td>해당 자료가 없습니다.</td></tr>
+			</table>
+			<!--/nif(qna_list)-->
+		</div>
 
-<table class="c_tb01" cellpadding="0" cellspacing="0">
-<tr>
-	<td class="c_th01">최근 과정Q&A (총 {{stat.cl_qna_cnt}}건 / <span class="{{stat.cl_qna_class}}">미답변 {{stat.cl_qna_ready_cnt}}건</span>)</td>
-	<td class="c_td01"><button class="btn_simp" onclick="location.href = 'cqna_list.jsp?uid={{uid}}';">더보기</button></td>
-</tr>
-</table>
+		<!-- 최근 과정 Q&A -->
+		<div class="crm-section-card">
+			<div class="crm-section-header">
+				<span><i class="fa fa-comments"></i>최근 과정 Q&amp;A</span>
+			</div>
+			<table class="l_tb01" cellpadding="0" cellspacing="0">
+			<colgroup>
+			<col width="40">
+			<col width="120">
+			<col>
+			<col width="95">
+			<col width="65">
+			</colgroup>
+			<thead>
+			<tr>
+				<td class="l_th03" align="center">No</td>
+				<td class="l_th03">과정명</td>
+				<td class="l_th03">제목</td>
+				<td class="l_th03" align="center">등록일</td>
+				<td class="l_th03" align="center">답변상태</td>
+			</tr>
+			</thead>
+			<tbody>
+			<!--@loop(cl_qna_list)-->
+			<tr>
+				<td class="l_td01" align="center">{{cl_qna_list.__ord}}</td>
+				<td class="l_td01 l_td_el" title="{{cl_qna_list.course_nm}}">{{cl_qna_list.course_nm_conv}}</td>
+				<td class="l_td01" title="{{cl_qna_list.subject}}">
+					<a href="cqna_view.jsp?qid={{cl_qna_list.id}}&uid={{uid}}&{{list_query}}">{{cl_qna_list.subject_conv}}</a>
+				</td>
+				<td class="l_td01" align="center">{{cl_qna_list.reg_date_conv}}</td>
+				<td class="l_td01" align="center">{{cl_qna_list.proc_status_conv}}</td>
+			</tr>
+			<!--/loop(cl_qna_list)-->
+			</tbody>
+			</table>
+			<!--@nif(cl_qna_list)-->
+			<table class="n_tb01" cellpadding="0" cellspacing="0">
+			<tr><td>해당 자료가 없습니다.</td></tr>
+			</table>
+			<!--/nif(cl_qna_list)-->
+		</div>
 
-<table class="l_tb01" cellpadding="0" cellspacing="0">
-<colgroup>
-<col width="40">
-<col width="150">
-<col>
-<col width="110">
-<col width="80">
-</colgroup>
-<thead>
-<tr align="center">
-	<td class="l_th03">No</td>
-	<td class="l_th03">과정명</td>
-	<td class="l_th03">제목</td>
-	<td class="l_th03">등록일</td>
-	<td class="l_th03">답변상태</td>
-</tr>
-</thead>
+	</div>
 
-<tbody>
-<!--@loop(cl_qna_list)-->
-<tr align="center">
-	<td class="l_td01">{{cl_qna_list.__ord}}</td>
-	<td class="l_td01" title="{{cl_qna_list.course_nm}}">{{cl_qna_list.course_nm_conv}}</td>
-	<td class="l_td01" align="left" title="{{cl_qna_list.subject}}">
-		<a href="cqna_view.jsp?qid={{cl_qna_list.id}}&uid={{uid}}&{{list_query}}">{{cl_qna_list.subject_conv}}</a>
-	</td>
-	<td class="l_td01">{{cl_qna_list.reg_date_conv}}</td>
-	<td class="l_td01">{{cl_qna_list.proc_status_conv}}</td>
-</tr>
-<!--/loop(cl_qna_list)-->
-</tbody>
-</table>
+	<!-- ===== 최근 수강목록 ===== -->
+	<div class="crm-section-card">
+		<div class="crm-section-header">
+			<span><i class="fa fa-book"></i>최근 수강목록</span>
+			<a href="course_list.jsp?uid={{uid}}" class="btn_simp">전체보기</a>
+		</div>
+		<table class="l_tb01" cellpadding="0" cellspacing="0" style="table-layout:fixed;">
+		<colgroup>
+		<col width="40">
+		<col>
+		<col width="50">
+		<col width="50">
+		<col width="150">
+		<col width="55">
+		<col width="60">
+		</colgroup>
+		<thead>
+		<tr>
+			<td class="l_th03" align="center">No</td>
+			<td class="l_th03">과정명</td>
+			<td class="l_th03" align="center">년도</td>
+			<td class="l_th03" align="center">기수</td>
+			<td class="l_th03" align="center">학습기간</td>
+			<td class="l_th03" align="center">진도</td>
+			<td class="l_th03" align="center">상태</td>
+		</tr>
+		</thead>
+		<tbody>
+		<!--@loop(courses)-->
+		<tr>
+			<td class="l_td01" align="center">{{courses.__ord}}</td>
+			<td class="l_td01 l_td_el" title="{{courses.course_nm}}">
+				<a href="course_view.jsp?cuid={{courses.id}}&uid={{uid}}">{{courses.course_nm_conv}}</a>
+			</td>
+			<td class="l_td01" align="center">{{courses.year}}</td>
+			<td class="l_td01" align="center">{{courses.step}}</td>
+			<td class="l_td01" align="center">{{courses.start_date_conv}} - {{courses.end_date_conv}}</td>
+			<td class="l_td01" align="right">{{courses.progress_ratio}}%</td>
+			<td class="l_td01" align="center">{{courses.status_conv}}</td>
+		</tr>
+		<!--/loop(courses)-->
+		</tbody>
+		</table>
+		<!--@nif(courses)-->
+		<table class="n_tb01" cellpadding="0" cellspacing="0">
+		<tr><td>해당 자료가 없습니다.</td></tr>
+		</table>
+		<!--/nif(courses)-->
+	</div>
 
-<!--@nif(cl_qna_list)-->
-<table class="n_tb01" cellpadding="0" cellspacing="0">
-<tr>
-	<td>해당 자료가 없습니다.</td>
-</tr>
-</table>
-<!--/nif(cl_qna_list)-->
-
-<p style="height:10px"></p>
-
-<table class="c_tb01" cellpadding="0" cellspacing="0">
-<tr>
-	<td class="c_th01">최근 수강목록 (총 {{stat.course_cnt}}건)</td>
-	<td class="c_td01"><button class="btn_simp" onclick="location.href = 'course_list.jsp?uid={{uid}}';">더보기</button></td>
-</tr>
-</table>
-
-<table class="l_tb01" cellpadding="0" cellspacing="0">
-<col width="40">
-<col>
-<col width="50">
-<col width="50">
-<col width="150">
-<col width="60">
-<col width="60">
-<col width="60">
-<tr>
-	<td class="l_th03">No</td>
-	<td class="l_th03">과정명</td>
-	<td class="l_th03">년도</td>
-	<td class="l_th03">기수</td>
-	<td class="l_th03">학습기간</td>
-	<td class="l_th03">진도</td>
-	<td class="l_th03">상태</td>
-</tr>
-<!--@loop(courses)-->
-<tr align="center">
-	<td class="l_td01">{{courses.__ord}}</td>
-	<td class="l_td01" align="left" title="{{courses.course_nm}}"><a href="course_view.jsp?cuid={{courses.id}}&uid={{uid}}">{{courses.course_nm_conv}}</a></td>
-	<td class="l_td01">{{courses.year}}</td>
-	<td class="l_td01">{{courses.step}}</td>
-	<td class="l_td01">{{courses.start_date_conv}} - {{courses.end_date_conv}}</td>
-	<td class="l_td01">{{courses.progress_ratio}}%</td>
-	<td class="l_td01">{{courses.status_conv}}</td>
-</tr>
-<!--/loop(courses)-->
-</table>
-<!--@nif(courses)-->
-<table class="n_tb01" cellpadding="0" cellspacing="0">
-<tr>
-	<td>해당 자료가 없습니다.</td>
-</tr>
-</table>
-<!--/nif(courses)-->
+</div>
