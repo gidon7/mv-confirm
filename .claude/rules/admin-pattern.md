@@ -1,304 +1,504 @@
 # 관리자 페이지 HTML 패턴 가이드
 
-관리자단 페이지를 만들 때 사용하는 Bootstrap 5 기반 HTML 패턴 모음.
-모든 HTML은 `public_html/html/admin/` 폴더에, JSP는 `public_html/admin/` 폴더에 위치.
+sysop 관리자단 페이지를 만들 때 사용하는 **admin2.css 기반** HTML 패턴 모음.
+모든 HTML은 `public_html/sysop/html/{기능}/` 폴더에, JSP는 `public_html/sysop/{기능}/` 폴더에 위치.
+
+> **주의:** Bootstrap 5 클래스(`btn btn-primary`, `form-control`, `col-lg-*` 등)는 sysop 관리자단에서 사용하지 않는다.
+> 반드시 admin2.css의 클래스(`bttn2`, `l_tb01`, `f_tb01` 등)를 사용할 것.
 
 ---
 
 ## 레이아웃 사용법
 
 ```jsp
-p.setLayout("admin");        // layout_admin.html
-p.setBody("admin.파일명");   // html/admin/파일명.html
+p.setLayout("sysop");           // layout_sysop.html (콘텐츠 영역)
+p.setBody("user.user_list");    // html/user/user_list.html
+```
+
+> 관리자단 전체 셸은 `layout_admin.html`이 담당하며, 각 콘텐츠 페이지는 iframe 안에서 `layout_sysop.html`로 렌더링된다.
+
+---
+
+## 패턴 1 — 기존 방식 목록 (t_tb01 + l_tb01)
+
+가장 기본적이고 많이 사용되는 패턴. HTML 변경 없이 admin2.css만으로 모던하게 보인다.
+
+```html
+<!-- ① 검색 폼 -->
+<form name="form1" method="get">
+<input type="hidden" name="ord" value="{{ord}}">
+
+<table class="t_tb01" cellpadding="0" cellspacing="0">
+  <tr>
+    <td class="t_th01">상태</td>
+    <td class="t_td01">
+      <label><input type="radio" name="s_status" value="" checked> 전체</label>
+      <label><input type="radio" name="s_status" value="1"> 정상</label>
+      <label><input type="radio" name="s_status" value="0"> 중지</label>
+    </td>
+    <td class="t_th01">검색</td>
+    <td class="t_td01">
+      <select name="s_field">
+        <option value="name">이름</option>
+        <option value="email">이메일</option>
+      </select>
+      <input type="text" name="s_keyword" value="{{s_keyword}}">
+      <button type="submit" class="bttn2 blue">검색</button>
+    </td>
+  </tr>
+</table>
+
+<!-- ② 액션 바 -->
+<table class="a_tb01" cellpadding="0" cellspacing="0" border="0">
+  <tr>
+    <td class="a_th01">
+      {{list_total}} &nbsp;
+      <select name="s_listnum" onchange="document.forms['form1'].submit();">
+        <option value="20">20</option>
+        <option value="50">50</option>
+      </select> 건씩 보기
+    </td>
+    <td class="a_td01">
+      <button type="button" class="bttn2 blue" onclick="location.href='xxx_insert.jsp'">
+        <i class="fa fa-plus"></i> 등록
+      </button>
+    </td>
+  </tr>
+</table>
+</form>
+
+{{form_script}}
+
+<!-- ③ 목록 테이블 -->
+<form name="form2" method="post">
+<table class="l_tb01" cellpadding="0" cellspacing="0">
+  <thead>
+    <tr>
+      <td class="l_th01 w30"><input type="checkbox" onclick="AutoCheck('form2','idx')"></td>
+      <td class="l_th01 w50">No</td>
+      <td class="l_th01"><span class="l_sort01" id="CL_name" onclick="ListSort(this,'{{ord}}')">이름</span></td>
+      <td class="l_th01 w80">상태</td>
+      <td class="l_th01 w80">관리</td>
+    </tr>
+  </thead>
+  <tbody>
+    <!--@loop(list)-->
+    <tr class="l_tr_{{list.ROW_CLASS}}">
+      <td class="l_td01 tc"><input type="checkbox" name="idx" value="{{list.id}}"></td>
+      <td class="l_td01 tc">{{list.__ord}}</td>
+      <td class="l_td01">
+        <a href="xxx_view.jsp?id={{list.id}}">{{list.name}}</a>
+      </td>
+      <td class="l_td01 tc"><span class="label">{{list.status_conv}}</span></td>
+      <td class="l_td01 tc">
+        <a href="xxx_modify.jsp?id={{list.id}}" class="btn_simp blue">수정</a>
+      </td>
+    </tr>
+    <!--/loop(list)-->
+  </tbody>
+</table>
+
+<!--@nif(list)-->
+<table class="n_tb01" cellpadding="0" cellspacing="0">
+  <tr><td>해당 자료가 없습니다.</td></tr>
+</table>
+<!--/nif(list)-->
+
+<table class="p_tb01" cellpadding="0" cellspacing="0">
+  <tr><td class="p_td01">{{pagebar}}</td></tr>
+</table>
+
+<script>
+ListSort(null, "{{ord}}");
+addEvent("onload", function() { setLabel(); });
+</script>
+</form>
 ```
 
 ---
 
-## 패턴 1 — 목록 + 검색 (가장 많이 사용)
+## 패턴 2 — 모던 방식 목록 (filter-bar + action-bar)
 
-**파일:** `html/admin/xxx_list.html`
+기존 패턴의 모던 버전. `admin-modern-guide.md` 참조.
 
 ```html
-<!-- 페이지 헤더 -->
-<div class="d-flex align-items-center mb-4">
-    <div>
-        <div class="page-title">{{page_title}}</div>
-        <div class="page-subtitle">총 {{total_count}}건</div>
+<form name="form1" method="get">
+<input type="hidden" name="ord" value="{{ord}}">
+
+<!-- ① 필터 바 (t_tb01 대체) -->
+<div class="filter-bar">
+  <div class="filter-chips">
+    <label class="filter-chip"><input type="radio" name="s_status" value=""> 전체</label>
+    <label class="filter-chip"><input type="radio" name="s_status" value="1"> 정상</label>
+    <label class="filter-chip"><input type="radio" name="s_status" value="0"> 중지</label>
+  </div>
+  <div class="filter-search">
+    <select name="s_field">
+      <option value="name">이름</option>
+      <option value="email">이메일</option>
+    </select>
+    <div class="filter-search-input">
+      <i class="fa fa-search"></i>
+      <input type="text" name="s_keyword" placeholder="검색어 입력" value="{{s_keyword}}">
     </div>
-    <a href="xxx_write.jsp" class="btn btn-primary ms-auto">
-        <i class="bi bi-plus-lg me-1"></i>등록
-    </a>
+    <button type="submit" class="bttn2 blue">검색</button>
+  </div>
 </div>
 
-<!-- 검색 바 -->
-<div class="admin-card mb-3">
-    <div class="p-3">
-        <form method="get" class="row g-2 align-items-end">
-            <div class="col-sm-3">
-                <label class="form-label form-label-sm">검색 조건</label>
-                <select name="search_type" class="form-select form-select-sm">
-                    <option value="name">이름</option>
-                    <option value="email">이메일</option>
-                </select>
-            </div>
-            <div class="col-sm-4">
-                <label class="form-label form-label-sm">검색어</label>
-                <input type="text" name="keyword" class="form-control form-control-sm"
-                       value="{{keyword}}" placeholder="검색어를 입력하세요">
-            </div>
-            <div class="col-sm-2">
-                <label class="form-label form-label-sm">상태</label>
-                <select name="status" class="form-select form-select-sm">
-                    <option value="">전체</option>
-                    <option value="1">활성</option>
-                    <option value="0">비활성</option>
-                </select>
-            </div>
-            <div class="col-auto">
-                <button type="submit" class="btn btn-primary btn-sm">
-                    <i class="bi bi-search me-1"></i>검색
-                </button>
-                <a href="?" class="btn btn-outline-secondary btn-sm ms-1">초기화</a>
-            </div>
-        </form>
-    </div>
+<!-- ② 액션 바 (a_tb01 대체) -->
+<div class="action-bar">
+  <div class="action-bar-left">
+    <span class="result-count">총 <strong>{{list_total}}</strong>건</span>
+    <select name="s_listnum" onchange="document.forms['form1'].submit();">
+      <option value="20">20개씩</option>
+      <option value="50">50개씩</option>
+    </select>
+  </div>
+  <div class="action-bar-right">
+    <button type="button" class="bttn2 blue" onclick="location.href='xxx_insert.jsp'">
+      <i class="fa fa-plus"></i> 등록
+    </button>
+  </div>
+</div>
+</form>
+
+{{form_script}}
+
+<!-- ③ 강화 테이블 -->
+<form name="form2" method="post">
+<div class="table-wrap">
+<table class="l_tb01" cellpadding="0" cellspacing="0">
+  <thead>
+    <tr>
+      <th class="l_th01 w30"><input type="checkbox" onclick="AutoCheck('form2','idx')"></th>
+      <th class="l_th01 w50">No</th>
+      <th class="l_th01"><span class="l_sort01" id="CL_name" onclick="ListSort(this,'{{ord}}')">이름</span></th>
+      <th class="l_th01 w80">상태</th>
+      <th class="l_th01 w80">관리</th>
+    </tr>
+  </thead>
+  <tbody>
+    <!--@loop(list)-->
+    <tr>
+      <td class="l_td01 tc"><input type="checkbox" name="idx" value="{{list.id}}"></td>
+      <td class="l_td01 tc">{{list.__ord}}</td>
+      <td class="l_td01">
+        <a href="xxx_view.jsp?id={{list.id}}">{{list.name}}</a>
+        <span class="sub-text">{{list.email}}</span>
+      </td>
+      <td class="l_td01 tc"><span class="label">{{list.status_conv}}</span></td>
+      <td class="l_td01 tc row-actions">
+        <a href="xxx_modify.jsp?id={{list.id}}" class="btn_simp blue">수정</a>
+      </td>
+    </tr>
+    <!--/loop(list)-->
+  </tbody>
+</table>
 </div>
 
-<!-- 목록 테이블 -->
-<div class="admin-card">
-    <table class="table admin-table">
-        <thead>
-            <tr>
-                <th style="width:60px">번호</th>
-                <th>이름</th>
-                <th>이메일</th>
-                <th style="width:100px">상태</th>
-                <th style="width:130px">가입일</th>
-                <th style="width:100px">관리</th>
-            </tr>
-        </thead>
-        <tbody>
-            <!--@loop(list)-->
-            <tr>
-                <td class="text-muted">{{list.rownum}}</td>
-                <td class="fw-medium">{{list.name}}</td>
-                <td class="text-muted">{{list.email}}</td>
-                <td>
-                    <!--@if(list.is_active)-->
-                    <span class="status-badge" style="background:#d1e7dd; color:#0a5c3a;">활성</span>
-                    <!--/if(list.is_active)-->
-                    <!--@nif(list.is_active)-->
-                    <span class="status-badge" style="background:#f8d7da; color:#842029;">비활성</span>
-                    <!--/nif(list.is_active)-->
-                </td>
-                <td class="text-muted">{{list.reg_date_format}}</td>
-                <td>
-                    <a href="xxx_view.jsp?id={{list.id}}" class="btn btn-sm btn-outline-primary">보기</a>
-                </td>
-            </tr>
-            <!--/loop(list)-->
-        </tbody>
-    </table>
-
-    <!-- 데이터 없음 -->
-    <!--@nif(has_list)-->
-    <div class="text-center text-muted py-5">
-        <i class="bi bi-inbox" style="font-size:2rem; display:block; margin-bottom:0.5rem;"></i>
-        데이터가 없습니다.
-    </div>
-    <!--/nif(has_list)-->
-
-    <!-- 페이징 -->
-    <!--@if(has_list)-->
-    <div class="d-flex justify-content-center py-3">
-        {{paging}}
-    </div>
-    <!--/if(has_list)-->
+<!--@nif(list)-->
+<div class="empty-state">
+  <i class="fa fa-inbox"></i>
+  <p>해당 자료가 없습니다.</p>
 </div>
-```
+<!--/nif(list)-->
 
-**JSP 예시:**
-```jsp
-<%@ page contentType="text/html; charset=utf-8" %><%@ include file="/init.jsp" %><%
+<table class="p_tb01"><tr><td class="p_td01">{{pagebar}}</td></tr></table>
 
-String keyword  = m.rs("keyword");
-String status   = m.rs("status");
-int page        = m.ri("page");
-if(page < 1) page = 1;
-
-XxxDao xxx = new XxxDao();
-xxx.addSearch("name", keyword, "like");
-if(!status.isEmpty()) xxx.addWhere("status = '" + status + "'");
-xxx.setOrderBy("id DESC");
-
-DataSet list = xxx.find();
-// rownum, reg_date_format 등 가공은 while 루프로 처리
-
-p.setLayout("admin");
-p.setBody("admin.xxx_list");
-p.setVar("title", "XXX 관리");
-p.setVar("page_title", "XXX 관리");
-p.setVar("keyword", keyword);
-p.setVar("has_list", list.size() > 0);
-p.setLoop("list", list);
-p.display();
-
-%>
+<script>
+ListSort(null, "{{ord}}");
+addEvent("onload", function() { setLabel(); initFilterChips(); });
+</script>
+</form>
 ```
 
 ---
 
-## 패턴 2 — 등록 / 수정 폼
-
-**파일:** `html/admin/xxx_write.html`
+## 패턴 3 — 기존 방식 등록/수정 폼 (c_tb01 + f_tb01)
 
 ```html
-<!-- 페이지 헤더 -->
-<div class="d-flex align-items-center mb-4">
-    <div>
-        <div class="page-title">{{page_title}}</div>
-    </div>
-    <a href="xxx_list.jsp" class="btn btn-outline-secondary ms-auto">
-        <i class="bi bi-arrow-left me-1"></i>목록으로
-    </a>
-</div>
+<form name="form1" method="post" target="sysfrm">
+<input type="hidden" name="mode" value="{{mode}}">
 
-<div class="row">
-    <div class="col-lg-8">
-        <div class="admin-card">
-            <div class="admin-card-header">
-                <i class="bi bi-pencil-square text-primary"></i>
-                <h6 class="admin-card-title">기본 정보</h6>
-            </div>
-            <div class="p-4">
-                <form name="form1" method="post" data-ajax="true" data-redirect="xxx_list.jsp">
+<!-- 섹션 타이틀 -->
+<table class="c_tb01" cellpadding="0" cellspacing="0">
+  <tr>
+    <td class="c_th01">기본 정보</td>
+    <td class="c_td01"></td>
+  </tr>
+</table>
 
-                    <div class="mb-3">
-                        <label class="form-label fw-medium">이름 <span class="text-danger">*</span></label>
-                        <input type="text" name="name" class="form-control" value="{{name}}">
-                    </div>
+<!-- 폼 필드 -->
+<table class="f_tb01" cellpadding="0" cellspacing="0">
+  <tr>
+    <th class="f_th01">이름 *</th>
+    <td class="f_td01"><input type="text" name="name" value="{{name}}"></td>
+    <th class="f_th01">상태</th>
+    <td class="f_td01">
+      <select name="status">
+        <option value="1">정상</option>
+        <option value="0">중지</option>
+      </select>
+    </td>
+  </tr>
+  <tr>
+    <th class="f_th01">내용</th>
+    <td class="f_td01" colspan="3">
+      <textarea name="content" rows="8" style="width:100%;">{{content}}</textarea>
+    </td>
+  </tr>
+</table>
 
-                    <div class="mb-3">
-                        <label class="form-label fw-medium">이메일 <span class="text-danger">*</span></label>
-                        <input type="email" name="email" class="form-control" value="{{email}}">
-                    </div>
-
-                    <div class="mb-4">
-                        <label class="form-label fw-medium">상태</label>
-                        <select name="status" class="form-select">
-                            <option value="1">활성</option>
-                            <option value="0">비활성</option>
-                        </select>
-                    </div>
-
-                    <div class="d-flex gap-2">
-                        <button type="submit" class="btn btn-primary">저장</button>
-                        <a href="xxx_list.jsp" class="btn btn-outline-secondary">취소</a>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-
-    <!-- 우측 사이드 패널 (선택사항) -->
-    <div class="col-lg-4">
-        <div class="admin-card">
-            <div class="admin-card-header">
-                <i class="bi bi-info-circle text-muted"></i>
-                <h6 class="admin-card-title">메모</h6>
-            </div>
-            <div class="p-3">
-                <p class="text-muted small mb-0">추가 정보나 안내 메시지를 여기에 작성합니다.</p>
-            </div>
-        </div>
-    </div>
-</div>
+<!-- 하단 버튼 -->
+<table class="b_tb01" cellpadding="0" cellspacing="0">
+  <tr>
+    <td class="b_th01"></td>
+    <td class="b_td01">
+      <button type="submit" class="bttn2 blue"><i class="fa fa-save"></i> 저장</button>
+      <button type="button" class="bttn2" onclick="history.back();">목록</button>
+    </td>
+  </tr>
+</table>
+</form>
 
 {{form_script}}
 ```
 
 ---
 
-## 패턴 3 — 상세 보기
-
-**파일:** `html/admin/xxx_view.html`
+## 패턴 4 — 모던 방식 등록/수정 폼 (form-card)
 
 ```html
-<div class="d-flex align-items-center mb-4">
-    <div class="page-title">상세 보기</div>
-    <div class="ms-auto d-flex gap-2">
-        <a href="xxx_modify.jsp?id={{id}}" class="btn btn-primary btn-sm">수정</a>
-        <button type="button" class="btn btn-danger btn-sm"
-                onclick="if(confirm('삭제하시겠습니까?')) location.href='xxx_delete.jsp?id={{id}}'">삭제</button>
-        <a href="xxx_list.jsp" class="btn btn-outline-secondary btn-sm">목록</a>
-    </div>
+<form name="form1" method="post" enctype="multipart/form-data" target="sysfrm">
+<input type="hidden" name="mode" value="{{mode}}">
+
+<div class="form-card">
+  <div class="form-card-header">
+    <h3 class="form-card-title"><i class="fa fa-user"></i> 기본 정보</h3>
+  </div>
+  <div class="form-card-body">
+    <table class="f_tb01" cellpadding="0" cellspacing="0">
+      <tr>
+        <th class="f_th01">이름 <span class="required">*</span></th>
+        <td class="f_td01"><input type="text" name="name" value="{{name}}"></td>
+        <th class="f_th01">상태</th>
+        <td class="f_td01">
+          <select name="status">
+            <option value="1">정상</option>
+            <option value="0">중지</option>
+          </select>
+        </td>
+      </tr>
+      <tr>
+        <th class="f_th01">내용</th>
+        <td class="f_td01" colspan="3">
+          <textarea name="content" rows="8" style="width:100%;">{{content}}</textarea>
+        </td>
+      </tr>
+    </table>
+  </div>
 </div>
 
-<div class="admin-card">
-    <div class="admin-card-header">
-        <i class="bi bi-person text-primary"></i>
-        <h6 class="admin-card-title">기본 정보</h6>
+<div class="form-bottom">
+  <button type="submit" class="bttn2 blue"><i class="fa fa-save"></i> 저장</button>
+  <button type="button" class="bttn2" onclick="history.back()">목록</button>
+</div>
+</form>
+
+{{form_script}}
+```
+
+---
+
+## 패턴 5 — 상세 보기
+
+```html
+<div class="form-card">
+  <div class="form-card-header">
+    <h3 class="form-card-title"><i class="fa fa-user"></i> 기본 정보</h3>
+    <div class="form-card-header-right">
+      <a href="xxx_modify.jsp?id={{id}}" class="bttn2 blue"><i class="fa fa-edit"></i> 수정</a>
+      <button type="button" class="bttn2 red" onclick="if(confirm('삭제하시겠습니까?')) location.href='xxx_delete.jsp?id={{id}}'">
+        <i class="fa fa-trash"></i> 삭제
+      </button>
     </div>
-    <div class="p-0">
-        <table class="table mb-0" style="font-size:0.875rem;">
-            <colgroup>
-                <col style="width:160px">
-                <col>
-            </colgroup>
-            <tbody>
-                <tr>
-                    <th class="ps-4 py-3 text-muted fw-medium bg-light">이름</th>
-                    <td class="py-3">{{name}}</td>
-                </tr>
-                <tr>
-                    <th class="ps-4 py-3 text-muted fw-medium bg-light">이메일</th>
-                    <td class="py-3">{{email}}</td>
-                </tr>
-                <tr>
-                    <th class="ps-4 py-3 text-muted fw-medium bg-light">전화번호</th>
-                    <td class="py-3">{{phone}}</td>
-                </tr>
-                <tr>
-                    <th class="ps-4 py-3 text-muted fw-medium bg-light">가입일</th>
-                    <td class="py-3 text-muted">{{reg_date_format}}</td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
+  </div>
+  <div class="form-card-body">
+    <table class="f_tb01" cellpadding="0" cellspacing="0">
+      <tr>
+        <th class="f_th01">이름</th>
+        <td class="f_td01">{{name}}</td>
+        <th class="f_th01">이메일</th>
+        <td class="f_td01">{{email}}</td>
+      </tr>
+      <tr>
+        <th class="f_th01">전화번호</th>
+        <td class="f_td01">{{phone}}</td>
+        <th class="f_th01">가입일</th>
+        <td class="f_td01">{{reg_date_format}}</td>
+      </tr>
+    </table>
+  </div>
+</div>
+
+<div class="form-bottom">
+  <button type="button" class="bttn2" onclick="history.back()">목록</button>
 </div>
 ```
 
 ---
 
-## CSS 클래스 참조 (layout_admin.html 정의)
+## 패턴 6 — 통계 카드 (대시보드)
 
-| 클래스 | 용도 |
-|---|---|
-| `.admin-card` | 흰 카드 컨테이너 (border + radius) |
-| `.admin-card-header` | 카드 상단 헤더 영역 |
-| `.admin-card-title` | 카드 제목 텍스트 |
-| `.admin-table` | 관리자용 테이블 스타일 |
-| `.stat-card` | 통계 카드 (대시보드용) |
-| `.stat-icon` | 통계 아이콘 박스 |
-| `.status-badge` | 상태 뱃지 (색상은 인라인으로 직접 지정) |
-| `.page-title` | 페이지 제목 (큰 텍스트) |
-| `.page-subtitle` | 페이지 부제목 (회색 작은 텍스트) |
-| `.content-wrap` | 본문 패딩 영역 (레이아웃 자동 적용) |
+```html
+<div class="stat-grid">
+  <div class="stat-card">
+    <div class="stat-card-icon blue"><i class="fa fa-users"></i></div>
+    <div>
+      <div class="stat-card-value">{{total_user}}</div>
+      <div class="stat-card-label">전체 회원</div>
+    </div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-card-icon green"><i class="fa fa-check-circle"></i></div>
+    <div>
+      <div class="stat-card-value">{{active_user}}</div>
+      <div class="stat-card-label">정상 회원</div>
+    </div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-card-icon orange"><i class="fa fa-clock-o"></i></div>
+    <div>
+      <div class="stat-card-value">{{today_join}}</div>
+      <div class="stat-card-label">오늘 가입</div>
+    </div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-card-icon red"><i class="fa fa-exclamation-triangle"></i></div>
+    <div>
+      <div class="stat-card-value">{{stop_user}}</div>
+      <div class="stat-card-label">중지 회원</div>
+    </div>
+  </div>
+</div>
+```
 
 ---
 
-## 상태 뱃지 색상 예시
+## CSS 클래스 참조 (admin2.css)
+
+### 검색/필터 영역
+
+| 클래스 | 용도 |
+|--------|------|
+| `.t_tb01` `.t_th01` `.t_td01` | 기존 검색 테이블 (라벨+셀) |
+| `.filter-bar` `.filter-chips` `.filter-chip` | 모던 필터 바 + 칩 (t_tb01 대체) |
+| `.filter-search` `.filter-search-input` | 검색 인풋 그룹 |
+| `.filter-label` `.filter-sep` | 필터 라벨/구분자 |
+
+### 액션/건수 영역
+
+| 클래스 | 용도 |
+|--------|------|
+| `.a_tb01` `.a_th01` `.a_td01` | 기존 액션 바 테이블 |
+| `.action-bar` `.action-bar-left` `.action-bar-right` | 모던 액션 바 (a_tb01 대체) |
+| `.result-count` | 건수 표시 |
+
+### 목록 테이블
+
+| 클래스 | 용도 |
+|--------|------|
+| `.l_tb01` `.l_th01` `.l_td01` | 목록 테이블 (기본) |
+| `.table-wrap` | 강화 테이블 래퍼 (border-radius, shadow) |
+| `.sub-text` | 셀 내 보조 텍스트 |
+| `.row-actions` | hover 시 표시되는 인라인 버튼 영역 |
+| `.empty-state` | 데이터 없음 표시 (n_tb01 대체) |
+| `.tc` | text-align: center |
+| `.text-muted` | 회색 텍스트 |
+
+### 폼/카드 영역
+
+| 클래스 | 용도 |
+|--------|------|
+| `.c_tb01` `.c_th01` `.c_td01` | 기존 섹션 타이틀 바 |
+| `.f_tb01` `.f_th01` `.f_td01` | 폼 필드 테이블 |
+| `.b_tb01` `.b_td01` | 기존 하단 버튼 바 |
+| `.form-card` `.form-card-header` `.form-card-body` | 모던 카드 폼 (c_tb01+f_tb01 대체) |
+| `.form-card-title` `.form-card-header-right` | 카드 제목/우측 버튼 |
+| `.form-bottom` | 모던 하단 버튼 영역 (b_tb01 대체) |
+| `.required` | 필수 입력 빨간 별표 |
+
+### 버튼
+
+| 클래스 | 용도 |
+|--------|------|
+| `.bttn2` | 표준 버튼 (흰 배경) |
+| `.bttn2.blue` | 파랑 (주요 액션 — 등록/저장) |
+| `.bttn2.red` | 빨강 (삭제/경고) |
+| `.bttn2.green` | 초록 (승인/완료) |
+| `.bttn2.sky` | 하늘 (보조 — 엑셀/일괄등록) |
+| `.bttn2.yellow` | 주황 (수정/주의) |
+| `.bttn2.purple` | 보라 (특수) |
+| `.btn_simp` | 소형 인라인 버튼 (테이블 셀 내) |
+
+### 라벨 (상태 뱃지)
 
 ```html
-<!-- 활성 / 승인 -->
-<span class="status-badge" style="background:#d1e7dd; color:#0a5c3a;">활성</span>
+<span class="label blue">정상</span>
+<span class="label gray">중지</span>
+<span class="label red">탈퇴</span>
+<span class="label green">승인</span>
+<span class="label sky">대기</span>
+<span class="label purple">최고관리자</span>
+<span class="label orange">주의</span>
+```
 
-<!-- 대기 / 검토중 -->
-<span class="status-badge" style="background:#fff3cd; color:#856404;">대기</span>
+> `setLabel()` JS 함수가 텍스트 내용에 따라 자동으로 색상 클래스를 부여한다.
 
-<!-- 비활성 / 거절 -->
-<span class="status-badge" style="background:#f8d7da; color:#842029;">비활성</span>
+### 알림/리마인더
 
-<!-- 일반 정보 -->
-<span class="status-badge" style="background:#e8f0fe; color:#0d6efd;">정보</span>
+```html
+<div class="reminder01 blue">일반 안내 메시지</div>
+<div class="reminder01 green">처리 완료</div>
+<div class="reminder01 yellow">주의 필요</div>
+<div class="reminder01 red">오류 발생</div>
+```
+
+### 탭
+
+```html
+<div class="tabs_02">
+  <ul>
+    <li class="current"><a href="?tab=1">기본정보</a></li>
+    <li><a href="?tab=2">수강내역</a></li>
+    <li class="tab_right">
+      <button class="bttn2 blue">저장</button>
+    </li>
+  </ul>
+</div>
+```
+
+### 통계/기타
+
+| 클래스 | 용도 |
+|--------|------|
+| `.stat-grid` `.stat-card` `.stat-card-icon` | 통계 카드 그리드 |
+| `.page-header` `.page-header-title` `.page-header-desc` | 페이지 상단 헤더 |
+| `.sticky-footer` | 긴 폼의 하단 고정 버튼 |
+| `.toast-container` `.toast-item` | 토스트 알림 |
+
+### 아이콘
+
+Font Awesome 4.x (`fa fa-*`) 사용:
+
+```html
+<i class="fa fa-search"></i>    검색
+<i class="fa fa-plus"></i>      추가
+<i class="fa fa-edit"></i>      수정
+<i class="fa fa-trash"></i>     삭제
+<i class="fa fa-download"></i>  다운로드
+<i class="fa fa-save"></i>      저장
+<i class="fa fa-star"></i>      즐겨찾기
+<i class="fa fa-users"></i>     회원
+<i class="fa fa-inbox"></i>     빈 상태
 ```

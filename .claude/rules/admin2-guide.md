@@ -100,15 +100,18 @@ LNB 메뉴 항목은 JS로 동적 생성 (`addAccNode()` 함수).
 | 항목 | admin.css (구) | admin2.css (신) |
 |---|---|---|
 | 폰트 | 맑은 고딕 | Pretendard + 맑은 고딕 fallback |
-| 컬러 | 파란 GIF 배경 + `#B8D0FA` 테두리 | CSS 변수 기반 (white / `#f1f5f9` / `#2563eb`) |
-| 테이블 헤더 | GIF 이미지 배경 | 연회색 배경 (`#f1f5f9`) + uppercase 소폰트 |
-| 버튼 | GIF 이미지 배경 + 색상 텍스트 | 솔리드 채우기 버튼 |
-| 라벨 | 배경 채우기 (진한 색) | 파스텔 알약형 뱃지 |
-| 테두리 | `#d1d1d1` | `#e2e8f0` (더 연하고 깔끔) |
-| 행 hover | `background:#efefef` | `background:#f8fafc` |
-| 페이징 | GIF 이미지 버튼 | 박스형 번호 버튼 |
-| GNB | 파란 배경 (`#235c9f`) | 다크 네이비 (`#1e293b`) |
-| LNB | 흰 배경 + 파란 active | 흰 배경 + 파란 active (더 세련) |
+| 컬러 | 파란 GIF 배경 + `#B8D0FA` 테두리 | CSS 변수 기반 (인디고 `#6366f1` + 따뜻한 Zinc 계열) |
+| 테이블 헤더 | GIF 이미지 배경 | 연회색 배경 (`#fafafb`) + 12px 볼드 |
+| 폼 라벨 | GIF 이미지 배경 | 연회색 `#fafafb` 배경 + 좌측 정렬 + 테두리 최소화 |
+| 버튼 | GIF 이미지 배경 + 색상 텍스트 | 그라데이션 버튼 + 컬러 섀도우 |
+| 라벨 | 배경 채우기 (진한 색) | 파스텔 둥근사각 뱃지 (`border-radius: 8px`) |
+| 테두리 | `#d1d1d1` | `#f0f0f0` (목록행) / `#e4e4e7` (폼/검색) |
+| 행 hover | `background:#efefef` | `background:#f8f7ff` (인디고 틴트) |
+| 페이징 | GIF 이미지 버튼 | 박스형 번호 버튼 + 인디고 active |
+| GNB/사이드바 | 파란 배경 (`#235c9f`) | 딥 다크 (`#111113` 그라데이션) |
+| LNB active | 파란 배경 | 인디고 반투명 글라스 (`rgba(99,102,241,0.25)`) |
+| 모서리 | 사각 | `border-radius: 12px` (카드), `8px` (인풋/버튼) |
+| 팝업 | 단순 테두리 | 블러 딤 + 그라데이션 액센트 라인 + 스프링 애니메이션 |
 
 ---
 
@@ -314,14 +317,17 @@ function setLabel() {
 
 ```css
 :root {
-    --primary:       #2563eb;   /* 주 색상 (파랑) */
-    --primary-hover: #1d4ed8;
-    --primary-light: #eff6ff;   /* 주 색상 연한 배경 */
-    --border:        #e2e8f0;   /* 테두리 색 */
-    --border-dark:   #cbd5e1;   /* 입력 테두리 색 */
-    --bg-th:         #f1f5f9;   /* 테이블 헤더/검색 배경 */
-    --text-base:     #1e293b;   /* 기본 텍스트 */
-    --text-muted:    #64748b;   /* 보조 텍스트 */
+    --primary:       #6366f1;   /* 주 색상 (인디고) */
+    --primary-hover: #4f46e5;
+    --primary-light: #eef2ff;   /* 주 색상 연한 배경 */
+    --border:        #f0f0f0;   /* 테두리 색 (연함) */
+    --border-dark:   #e0e0e0;   /* 입력 테두리 색 */
+    --bg-base:       #f7f7f8;   /* 페이지 배경 */
+    --bg-th:         #fafafa;   /* 테이블 헤더 배경 */
+    --text-base:     #18181b;   /* 기본 텍스트 (Zinc-900) */
+    --text-muted:    #71717a;   /* 보조 텍스트 (Zinc-500) */
+    --radius:        12px;      /* 카드 모서리 */
+    --radius-sm:     8px;       /* 인풋/버튼 모서리 */
 }
 ```
 

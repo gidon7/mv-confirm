@@ -410,240 +410,107 @@ addEvent("onload", function() { setLabel(); initFilterChips(); });
 
 ---
 
-## 8. 신규 CSS 클래스 (admin2.css에 추가)
+## 8. 페이지 헤더 (Page Header) — 페이지 상단 제목+버튼
 
-아래 CSS를 `admin2.css` 하단에 추가한다.
-
-```css
-/* =====================================================
-   Filter Bar (필터 바)
-   ===================================================== */
-.filter-bar {
-    display: flex;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 8px;
-    padding: 12px 14px;
-    background: var(--bg-white);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    margin-bottom: 8px;
-    box-shadow: var(--shadow-sm);
-}
-.filter-bar-multi .filter-row {
-    display: flex;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 8px;
-    width: 100%;
-}
-.filter-label {
-    font-size: 12px;
-    font-weight: 600;
-    color: var(--text-muted);
-    white-space: nowrap;
-    padding: 0 4px;
-}
-.filter-sep { color: var(--text-light); padding: 0 2px; }
-
-/* 필터 칩 (라디오/체크박스 버튼화) */
-.filter-chips { display: flex; gap: 4px; flex-wrap: wrap; }
-.filter-chip {
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    padding: 4px 10px;
-    border: 1px solid var(--border-dark);
-    border-radius: 20px;
-    font-size: 12px;
-    color: var(--text-muted);
-    cursor: pointer;
-    transition: all 0.15s;
-    white-space: nowrap;
-    background: #fff;
-}
-.filter-chip:hover { border-color: var(--primary); color: var(--primary); }
-.filter-chip input[type=radio],
-.filter-chip input[type=checkbox] { display: none; }
-.filter-chip:has(input:checked) {
-    background: var(--primary);
-    border-color: var(--primary);
-    color: #fff;
-    font-weight: 600;
-}
-/* :has() 미지원 브라우저용 — JS로 .active 클래스 추가 */
-.filter-chip.active {
-    background: var(--primary);
-    border-color: var(--primary);
-    color: #fff;
-    font-weight: 600;
-}
-
-/* 검색 인풋 그룹 */
-.filter-search { display: flex; align-items: center; gap: 6px; margin-left: auto; flex-wrap: wrap; }
-.filter-search-input {
-    position: relative;
-    display: inline-flex;
-    align-items: center;
-}
-.filter-search-input i {
-    position: absolute;
-    left: 8px;
-    color: var(--text-light);
-    font-size: 13px;
-    pointer-events: none;
-}
-.filter-search-input input[type=text] {
-    padding-left: 28px;
-    width: 200px;
-}
-
-/* =====================================================
-   Action Bar (액션 바)
-   ===================================================== */
-.action-bar {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 6px 0;
-    margin-bottom: 6px;
-    gap: 8px;
-}
-.action-bar-left  { display: flex; align-items: center; gap: 8px; }
-.action-bar-right { display: flex; align-items: center; gap: 6px; }
-.result-count { font-size: 13px; color: var(--text-muted); }
-.result-count strong { color: var(--primary); font-weight: 700; }
-
-/* =====================================================
-   Table Wrap + 강화 테이블
-   ===================================================== */
-.table-wrap {
-    border-radius: var(--radius);
-    overflow: hidden;
-    box-shadow: var(--shadow-sm);
-    margin-bottom: 0;
-}
-.table-wrap .l_tb01 { margin-top: 0; border-radius: 0; box-shadow: none; }
-
-/* 행 내 서브텍스트 */
-.sub-text { display: block; font-size: 11px; color: var(--text-light); margin-top: 1px; }
-.text-muted { color: var(--text-muted) !important; }
-.tc { text-align: center !important; }
-
-/* 인라인 행 액션 버튼 (hover 시 표시) */
-.row-actions { white-space: nowrap; }
-.row-actions .btn_simp { opacity: 0; transition: opacity 0.15s; }
-.l_tb01 tbody tr:hover .row-actions .btn_simp { opacity: 1; }
-
-/* Empty State (데이터 없음) */
-.empty-state {
-    text-align: center;
-    padding: 48px 16px;
-    color: var(--text-light);
-    background: var(--bg-white);
-    border: 1px solid var(--border);
-    border-top: none;
-}
-.empty-state i { font-size: 32px; display: block; margin-bottom: 12px; }
-.empty-state p { font-size: 13px; margin: 0; }
-
-/* =====================================================
-   Form Card (카드 폼)
-   ===================================================== */
-.form-card {
-    background: var(--bg-white);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    box-shadow: var(--shadow-sm);
-    margin-bottom: 12px;
-    overflow: hidden;
-}
-.form-card-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 10px 16px;
-    background: var(--bg-th);
-    border-bottom: 2px solid var(--primary);
-}
-.form-card-title {
-    font-size: 14px;
-    font-weight: 700;
-    color: var(--text-base);
-    margin: 0;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-}
-.form-card-title i { color: var(--primary); }
-.form-card-header-right { display: flex; gap: 6px; }
-.form-card-body { padding: 0; }
-.form-card-body .f_tb01 { margin-bottom: 0; }
-
-/* 하단 버튼 영역 */
-.form-bottom {
-    display: flex;
-    justify-content: flex-end;
-    gap: 6px;
-    padding: 12px 0;
-    margin-top: 4px;
-}
-
-/* 필수 입력 표시 */
-.required { color: var(--danger); font-weight: 700; margin-left: 2px; }
-
-/* =====================================================
-   Stat Card (통계 카드)
-   ===================================================== */
-.stat-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-    gap: 10px;
-    margin-bottom: 16px;
-}
-.stat-card {
-    background: var(--bg-white);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 14px 16px;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    box-shadow: var(--shadow-sm);
-    transition: box-shadow 0.15s;
-}
-.stat-card:hover { box-shadow: var(--shadow); }
-.stat-card-icon {
-    width: 40px;
-    height: 40px;
-    border-radius: var(--radius);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 18px;
-    flex-shrink: 0;
-}
-.stat-card-icon.blue   { background: var(--primary-light); color: var(--primary); }
-.stat-card-icon.green  { background: var(--success-light);  color: var(--success); }
-.stat-card-icon.red    { background: var(--danger-light);   color: var(--danger); }
-.stat-card-icon.orange { background: var(--warning-light);  color: var(--warning); }
-.stat-card-icon.purple { background: #f3e8ff; color: #7c3aed; }
-.stat-card-value {
-    font-size: 22px;
-    font-weight: 700;
-    color: var(--text-base);
-    line-height: 1.2;
-}
-.stat-card-label {
-    font-size: 12px;
-    color: var(--text-muted);
-    margin-top: 2px;
-}
+```html
+<div class="page-header">
+  <div class="page-header-left">
+    <div class="page-header-title">회원 관리</div>
+    <div class="page-header-desc">총 {{list_total}}명 · 오늘 가입 {{today_join}}명</div>
+  </div>
+  <div class="page-header-right">
+    <button type="button" class="bttn2" onclick="excelDown()">
+      <i class="fa fa-download"></i> 엑셀
+    </button>
+    <button type="button" class="bttn2 blue" onclick="location.href='xxx_insert.jsp'">
+      <i class="fa fa-plus"></i> 등록
+    </button>
+  </div>
+</div>
 ```
 
 ---
 
-## 9. 필터 칩 JS 헬퍼
+## 9. 하단 고정 버튼 (Sticky Footer) — 긴 폼 페이지용
+
+```html
+<form name="form1" method="post" target="sysfrm">
+  <div class="form-card">...</div>
+  <div class="form-card">...</div>
+
+  <!-- 스크롤해도 항상 하단에 고정 -->
+  <div class="sticky-footer">
+    <button type="button" class="bttn2" onclick="history.back()">목록</button>
+    <button type="submit" class="bttn2 blue"><i class="fa fa-save"></i> 저장</button>
+  </div>
+</form>
+```
+
+> `sticky-footer`는 `form-bottom` 대신 사용. 폼이 길어서 스크롤이 필요한 경우에만 사용한다.
+> 짧은 폼은 `form-bottom`으로 충분.
+
+---
+
+## 10. 토스트 알림 (Toast) — 우측 하단 피드백
+
+```html
+<!-- layout_sysop.html 또는 layout_admin.html에 1회 배치 -->
+<div class="toast-container" id="toast-area"></div>
+```
+
+```js
+function showToast(msg, type) {
+    type = type || "info";
+    var icons = { success:"fa-check-circle", error:"fa-times-circle", warning:"fa-exclamation-triangle", info:"fa-info-circle" };
+    var el = document.createElement("div");
+    el.className = "toast-item " + type;
+    el.innerHTML = '<i class="fa ' + (icons[type]||icons.info) + '"></i> ' + msg;
+    document.getElementById("toast-area").appendChild(el);
+    setTimeout(function() { el.style.opacity = "0"; setTimeout(function() { el.remove(); }, 300); }, 3000);
+}
+
+// 사용 예
+showToast("저장되었습니다.", "success");
+showToast("삭제 실패!", "error");
+showToast("처리 대기중...", "warning");
+```
+
+---
+
+## 11. CSS 클래스 참조
+
+> 아래 모든 클래스는 **admin2.css에 이미 포함**되어 있다. 별도 추가 불필요.
+
+| 분류 | 주요 클래스 | 용도 |
+|------|------------|------|
+| **필터** | `.filter-bar`, `.filter-chips`, `.filter-chip`, `.filter-search`, `.filter-search-input`, `.filter-label`, `.filter-sep`, `.filter-bar-multi`, `.filter-row` | 검색 영역 (t_tb01 대체) |
+| **액션** | `.action-bar`, `.action-bar-left`, `.action-bar-right`, `.result-count` | 건수/버튼 바 (a_tb01 대체) |
+| **테이블** | `.table-wrap`, `.sub-text`, `.row-actions`, `.tc`, `.text-muted` | 강화 테이블 래퍼 |
+| **빈 상태** | `.empty-state` | 데이터 없음 표시 (n_tb01 대체) |
+| **카드 폼** | `.form-card`, `.form-card-header`, `.form-card-title`, `.form-card-header-right`, `.form-card-body`, `.form-bottom`, `.required` | 폼 섹션 (c_tb01+f_tb01 대체) |
+| **통계** | `.stat-grid`, `.stat-card`, `.stat-card-icon`, `.stat-card-value`, `.stat-card-label` | 대시보드 통계 카드 |
+| **페이지 헤더** | `.page-header`, `.page-header-left`, `.page-header-title`, `.page-header-desc`, `.page-header-right` | 페이지 상단 제목+버튼 |
+| **하단 고정** | `.sticky-footer` | 긴 폼의 하단 고정 버튼 |
+| **토스트** | `.toast-container`, `.toast-item`, `.toast-item.success/error/warning/info` | 우측 하단 알림 |
+
+### 필터 칩 `.active` 클래스
+
+`:has()` CSS 선택자를 지원하는 브라우저는 자동 동작.
+구형 브라우저용으로 `.active` 클래스 폴백도 제공됨 → JS `initFilterChips()` 함수 사용.
+
+### stat-card-icon 색상 변형
+
+```
+.stat-card-icon.blue    — 파랑 (기본 정보)
+.stat-card-icon.green   — 초록 (완료/정상)
+.stat-card-icon.red     — 빨강 (경고/오류)
+.stat-card-icon.orange  — 주황 (대기/주의)
+.stat-card-icon.purple  — 보라 (특수)
+```
+
+---
+
+## 12. 필터 칩 JS 헬퍼
 
 `:has()` CSS 선택자를 지원하지 않는 구형 브라우저 대응:
 
@@ -667,7 +534,7 @@ function initFilterChips() {
 
 ---
 
-## 10. 마이그레이션 우선순위
+## 13. 마이그레이션 우선순위
 
 | 우선순위 | 대상 | 변경 내용 |
 |---------|------|---------|
