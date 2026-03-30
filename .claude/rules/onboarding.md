@@ -84,7 +84,7 @@ JSP, HTML, Java(DAO) 파일을 작성하면 **Hook이 자동으로 규칙 위반
 
 | 문서 | 용도 |
 |------|------|
-| `GUIDE.md` | 맑은프레임워크 코딩 가이드 (상세) |
+| `.claude/rules/guide.md` | 맑은프레임워크 코딩 가이드 (상세) |
 | `public_html/api/README.md` | REST API 문서 |
 | `schema.sql` | DB 스키마 |
 | MCP `search_docs("키워드")` | 프레임워크 문서 검색 |

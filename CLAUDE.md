@@ -38,5 +38,14 @@ schema.sql            DB 스키마
 - `get_doc` / `search_docs` — 프레임워크 문서 조회
 
 ## 주요 파일
-- `GUIDE.md` — 맑은프레임워크 AI 코딩 가이드 (상세)
 - `schema.sql` — DB 테이블 스키마
+
+## .claude/rules/ 가이드 문서
+- `malgn.md` — 맑은프레임워크 핵심 규칙
+- `guide.md` — 맑은프레임워크 AI 코딩 가이드 (상세)
+- `onboarding.md` — Claude Code 온보딩 가이드
+- `admin-pattern.md` — 관리자 페이지 HTML 패턴
+- `admin2-guide.md` — admin2.css 리뉴얼 가이드
+- `admin-modern-guide.md` — 모던 리뉴얼 가이드 (UI 구조 변경)
+- `renewal-plan.md` — 관리자단 리뉴얼 기획서
+- `layout-admin-guide.md` — 레이아웃 구조 분석 및 리뉴얼 가이드
