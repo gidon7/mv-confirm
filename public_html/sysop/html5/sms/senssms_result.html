@@ -1,0 +1,37 @@
+<div class="button-right" style="margin-bottom:10px;">
+  <!--@if(SYS_BLINDUSER)-->
+  <span>
+    <button type="button" class="bttn2 ruby" onclick="OpenLayer('../main/privacy_agree.jsp', '_PA01', 600, 500)">가려진 정보 보기</button>
+  </span>
+  <!--/if(SYS_BLINDUSER)-->
+</div>
+
+<table class="f_tb01" cellpadding="0" cellspacing="0">
+
+  <tr>
+    <td class="f_th01">수신번호</td>
+    <td class="f_td01">{{messages.dest_phone}}</td>
+  </tr>
+  <tr>
+    <td class="f_th01">타입</td>
+    <td class="f_td01">{{messages.type}}</td>
+  </tr>
+  <tr>
+    <td class="f_th01">요청시간</td>
+    <td class="f_td01">{{messages.request_time}}</td>
+  </tr>
+  <tr>
+    <td class="f_th01">처리상태</td>
+    <td class="f_td01">{{messages.status_conv}}</td>
+  </tr>
+  <tr>
+    <td class="f_th01">발송결과(코드)</td>
+    <td class="f_td01">
+      {{messages.status_name_conv}}<!--@if(messages.status_code)-->({{messages.status_code}})<!--/if(messages.status_code)-->
+    </td>
+  </tr>
+  <tr>
+    <td class="f_th01">완료시간</td>
+    <td class="f_td01">{{messages.complete_time}}</td>
+  </tr>
+</table>

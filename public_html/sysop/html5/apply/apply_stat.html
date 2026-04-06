@@ -1,0 +1,126 @@
+<form name="form1" method="get">
+    <input type="hidden" name="id" value="{{id}}">
+    <input type="hidden" name="ord" value="">
+    <input type="hidden" name="mode" value="">
+
+    <table class="t_tb01" cellpadding="0" cellspacing="0" style="table-layout:fixed;">
+        <col width="120"><col>
+        <col width="120"><col>
+        <tr>
+            <td class="t_th01">등록일</td>
+            <td class="t_td01" colspan="3">
+                <input type="text" name="s_sdate" class="cal01" size="12">
+                - <input type="text" name="s_edate" class="cal01" size="12">
+            </td>
+        </tr>
+        <tr>
+            <td class="t_th01">검색</td>
+            <td class="t_td01" colspan="3">
+                <select name="s_field" onchange="document.forms['form1']['s_keyword'].focus();">
+                    <option value=""> - 전체 - </option>
+                    <option value="a.user_nm">신청자명</option>
+                    <option value="a.code">코드</option>
+                </select>
+                <input type="text" name="s_keyword" size="30" onfocus="this.select();">
+                <button type="submit" class="bttn2">검색</button>
+
+                <div class="button-right">
+                    <!--@if(SYS_BLINDUSER)-->
+                    <span style="padding-left:10px;">
+				        <button type="button" class="bttn2 ruby" onclick="OpenLayer('../main/privacy_agree.jsp', '_PA01', 600, 500)">가려진 정보 보기</button>
+			        </span>
+                    <!--/if(SYS_BLINDUSER)-->
+                </div>
+            </td>
+        </tr>
+    </table>
+
+    <table class="a_tb01" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+            <td class="a_th01">{{list_total}}</td>
+            <td class="a_td01">
+                <button type="button" class="bttn2" onclick="delApplyUser()">신청회원삭제</button>
+                <button type="button" class="bttn2" onclick="OpenLayer('../main/privacy_agree.jsp?mode=exdown', '_PA01', 600, 500);">EXCEL</button>
+            </td>
+        </tr>
+    </table>
+
+</form>
+{{form_script}}
+
+<form name="form2" method="post">
+    <table class="l_tb01" cellpadding="0" cellspacing="0">
+        <colgroup>
+            <col width="50">
+            <col>
+            <col width="150">
+            <col width="120">
+            <col width="150">
+            <col width="150">
+            <col width="120">
+            <col width="30">
+        </colgroup>
+        <thead>
+        <tr align="center">
+            <td class="l_th01">No</td>
+            <td class="l_th01">신청서명</td>
+            <td class="l_th01">신청서코드</td>
+            <td class="l_th01">신청자명</td>
+            <td class="l_th01">휴대전화번호</td>
+            <td class="l_th01">이메일</td>
+            <td class="l_th01">등록일</td>
+            <td class="l_th01" width="30"><input type="checkbox" onclick="AutoCheck('form2', 'idx', this);"/></td>
+        </tr>
+        </thead>
+        <tbody>
+        <!--@loop(list)-->
+        <tr class="l_tr_{{list.ROW_CLASS}}" align="center">
+            <td class="l_td01">{{list.__ord}}</td>
+            <td class="l_td01">{{list.apply_nm}}</td>
+            <td class="l_td01">{{list.apply_cd}}</td>
+            <td class="l_td01">{{list.user_nm}}</td>
+            <td class="l_td01">{{list.mobile_conv}}</td>
+            <td class="l_td01">{{list.email}}</td>
+            <td class="l_td01">{{list.reg_date_conv}}</td>
+            <td class="l_td01">
+                <input type="checkbox" name="idx" value="{{list.id}}"/>
+            </td>
+        </tr>
+        <!--/loop(list)-->
+        </tbody>
+    </table>
+
+    <!--@nif(list)-->
+    <table class="n_tb01" cellpadding="0" cellspacing="0">
+        <tr>
+            <td>해당 자료가 없습니다.</td>
+        </tr>
+    </table>
+    <!--/nif(list)-->
+
+    <table class="p_tb01" cellpadding="0" cellspacing="0">
+        <tr>
+            <td class="p_td01">{{pagebar}}</td>
+        </tr>
+    </table>
+</form>
+
+<script>ListSort(null, "{{ord}}");</script>
+<script>
+    function setLabel() {
+        var progresses = { "정상" : "blue", "중지" : "gray", "전자책" : "sky", "실물책" : "red", "패키지" : "brown" };
+        $(".label").each(function() {
+            var v = $(this).html();
+            $(this).addClass(progresses[v]);
+        });
+    }
+    addEvent("onload", function() {
+        setLabel();
+    });
+    function delApplyUser() {
+        var idx = GetFormValue("form2", "idx");
+        if(idx == '') { alert('삭제할 회원을 선택해주세요'); return; }
+        if(!confirm("삭제하시겠습니까?\n삭제된 자료는 복구할 수 없습니다.")) { return; }
+        document.forms['form2'].submit();
+    }
+</script>

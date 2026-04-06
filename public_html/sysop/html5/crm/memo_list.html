@@ -1,0 +1,184 @@
+<div id="crm_wrap" class="crm_memo">
+
+	<!-- 메모 패널 헤더 -->
+	<div class="crm-memo-header">
+		<div class="crm-memo-header-title">
+			<a href="javascript:ToggleMemoLayer();">
+				<i class="fa fa-angle-up" style="font-size:15px;"></i>
+				<span class="memo-nm">{{user_nm}}</span>
+				<span style="opacity:0.7;font-weight:400;">님 상담이력 ({{list_num_conv}}건)</span>
+			</a>
+		</div>
+		<div class="crm-memo-header-actions">
+			<!--@if(master_block)-->
+			<!--@if(malgn_office_block)--><!--@if(admin_block)-->
+			<button type="button" class="top_button small white" onclick="if(confirm('현재 로그인된 관리자에서 로그아웃됩니다. 계속하시겠습니까?')) window.open('{{FRONT_URL}}/sysop/main/slogin.jsp?uid={{uid}}&ek={{ek_sysop}}')">
+				[맑]관리
+			</button>
+			<!--/if(admin_block)--><!--/if(malgn_office_block)-->
+			<button type="button" class="top_button small white" onclick="window.open('{{FRONT_URL}}/member/alogin.jsp?ek={{ek}}&id={{login_id}}')">
+				<i class="fa fa-sign-in"></i> 로그인
+			</button>
+			<!--/if(master_block)-->
+		</div>
+	</div>
+
+	<div id="sys-wrap">
+		<div id="sys-scroll">
+			<div id="sys-contents">
+
+				<!-- 회원 정보 + 메모 입력 -->
+				<form name="form1" method="POST" target="sysfrmblank">
+				<table class="f_tb01" cellpadding="0" cellspacing="0" style="table-layout:fixed;">
+				<tr>
+					<td class="f_th01" style="width:55px;">아이디</td>
+					<td class="f_td01">
+						<span style="font-weight:600;">{{login_id}}</span>
+						<span style="float:right;display:flex;gap:4px;">
+							<a href="javascript:parent._BODY.OpenPopSendSms('{{id}}');" title="{{mobile}}">
+								<img src="../html/images/admin/icon/phone.gif" style="vertical-align:-2px;">
+							</a>
+							<a href="javascript:parent._BODY.OpenAdminLayer('../mail/pop_mail.jsp?idx={{id}}', 'M607', 900, 700);" title="{{email}}">
+								<img src="../html/images/admin/icon/email.gif" style="vertical-align:-3px;">
+							</a>
+						</span>
+					</td>
+				</tr>
+				<tr>
+					<td class="f_th01" style="width:55px;">회원명</td>
+					<td class="f_td01" style="font-weight:700; color:#1e293b;">{{user_nm}}</td>
+				</tr>
+				<tr>
+					<td class="f_th01" style="width:55px;">소속</td>
+					<td class="f_td01">{{dept_nm_conv}}</td>
+				</tr>
+				<tr>
+					<td class="f_td01" colspan="2" style="padding:8px;">
+						<textarea id="memo" name="memo" style="width:100%;height:75px;box-sizing:border-box;resize:vertical;"></textarea>
+						<div style="display:flex;justify-content:space-between;align-items:center;margin-top:4px;">
+							<div style="display:flex;gap:3px;">
+								<input type="button" class="btn_simp" value="U" title="회원명 입력" onclick="insertText('{{user_nm}}')">
+								<input type="button" class="btn_simp" value="M" title="휴대번호 입력" onclick="insertText('{{mobile}}')">
+								<input type="button" class="btn_simp" value="E" title="이메일 입력" onclick="insertText('{{email}}')">
+							</div>
+							<input type="submit" class="bttn2 sky" value="상담 등록">
+						</div>
+						<script>
+						function insertText(v) {
+							var el = document.getElementById("memo");
+							el.focus();
+							if(document.selection) {
+								document.selection.createRange().text = v;
+							} else if(document.getSelection) {
+								var pos = (el.value.substring(0, el.selectionStart) + v).length;
+								el.value = el.value.substring(0, el.selectionStart) + v + el.value.substring(el.selectionEnd, el.value.length);
+								el.selectionStart = el.selectionEnd = pos;
+							}
+							el.focus();
+						}
+						</script>
+					</td>
+				</tr>
+				</table>
+				</form>
+				{{form_script}}
+
+				<!-- 숨김 메모 토글 -->
+				<form name="form2" method="get">
+				<input type="hidden" name="uid" value="{{uid}}">
+				<div style="padding:6px 10px; border-bottom:1px solid #e2e8f0; background:#f8fafc;">
+					<label style="font-size:12px; color:#64748b; cursor:pointer;">
+						<input type="checkbox" name="s_hide" value="Y" onclick="document.forms['form2'].submit();" style="margin-right:4px;vertical-align:middle;">
+						숨겨진 메모 보기
+					</label>
+				</div>
+
+				<!-- 상담이력 목록 -->
+				<table class="t_tb01" cellpadding="0" cellspacing="0">
+				<!--@loop(list)-->
+				<tr>
+					<td class="t_th01" style="text-align:left; line-height:1.5; padding:8px 10px;">
+						<strong style="color:#1e293b;">{{list.reg_date_conv}}</strong>
+						<span style="color:#64748b;font-size:12px;margin-left:6px;">{{list.manager_nm}}</span>
+						<!--@if(list.status:1)-->
+						<button type="button" class="btn_simp red" onclick="toggleMemoStatus('{{list.id}}', 'hide');" style="float:right;margin-top:-1px;">숨김</button>
+						<!--/if(list.status:1)-->
+						<!--@if(list.status:0)-->
+						<button type="button" class="btn_simp blue" onclick="toggleMemoStatus('{{list.id}}', 'show');" style="float:right;margin-top:-1px;">숨김해제</button>
+						<!--/if(list.status:0)-->
+					</td>
+				</tr>
+				<tr>
+					<td class="t_td01" style="font-size:12px; background-color:<!--@if(list.status:0)-->#fef2f2<!--/if(list.status:0)--><!--@nif(list.status:0)-->#fff<!--/nif(list.status:0)-->; padding:10px;">
+						<div style="min-height:40px; line-height:1.6; white-space:pre-wrap;">{{list.memo_conv}}</div>
+					</td>
+				</tr>
+				<!--/loop(list)-->
+				</table>
+
+				<!--@nif(list)-->
+				<table class="n_tb01" cellpadding="0" cellspacing="0">
+				<tr><td>상담내용이 없습니다.</td></tr>
+				</table>
+				<!--/nif(list)-->
+
+				<table class="p_tb01" cellpadding="0" cellspacing="0">
+				<tr>
+					<td class="p_td01">{{pagebar}}</td>
+				</tr>
+				</table>
+				</form>
+				{{form2_script}}
+
+			</div>
+		</div>
+	</div>
+</div>
+
+<style>
+/* 메모 패널 전용 오버라이드 */
+#crm_wrap.crm_memo { height: 100%; }
+#crm_wrap.crm_memo #sys-wrap { padding-top: 50px; }
+#crm_wrap.crm_memo #sys-contents { min-width: inherit !important; padding: 0; }
+#crm_wrap.crm_memo .f_tb01 { margin: 0; }
+#crm_wrap.crm_memo .t_tb01 { border: none; border-radius: 0; box-shadow: none; margin: 0; }
+#crm_wrap.crm_memo .t_th01 { border-left: none; border-right: none; }
+#crm_wrap.crm_memo .t_td01 { border-left: none; border-right: none; }
+#crm_wrap.crm_memo .n_tb01 { border: none; border-radius: 0; }
+#crm_wrap.crm_memo .n_tb01 td { border: none; padding: 20px; }
+</style>
+
+<script>
+$(document).ready(function() {
+	// 초기 상태: 패널이 열린 상태로 로드됨 (parent의 openMemoPanel()이 열어줌)
+	memo_status = "open";
+	$(".fa-angle-down").removeClass("fa-angle-down").addClass("fa-angle-up");
+});
+
+var memo_status = "open";
+function ToggleMemoLayer() {
+	if(!parent) return;
+
+    if (memo_status == "open") {
+		// 패널 닫기
+		$("#_BODY", parent.document).css("padding-right", "0");
+		$("#_CS", parent.document).css("height", "0");
+		$("#cs-btn", parent.document).css("display", "flex");
+		$(".fa-angle-up").removeClass("fa-angle-up").addClass("fa-angle-down");
+        memo_status = "close";
+    } else {
+		// 패널 열기 (패널 안에서 재열기 시)
+		$("#_BODY", parent.document).css("padding-right", "300px");
+		$("#_CS", parent.document).css("height", "100%");
+		$("#cs-btn", parent.document).css("display", "none");
+		$(".fa-angle-down").removeClass("fa-angle-down").addClass("fa-angle-up");
+		memo_status = "open";
+	}
+    return;
+}
+
+function toggleMemoStatus(umid, status) {
+	if(!confirm((status == "hide" ? "숨김" : "숨김해제") + " 처리하시겠습니까?")) return;
+	sysfrmblank.location.href = "memo_list.jsp?mode=" + (status == "hide" ? "hide" : "show") + "&umid=" + umid + "&{{mode_query}}";
+}
+</script>

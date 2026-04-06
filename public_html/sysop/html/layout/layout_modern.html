@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<title>{{SYS_TITLE}}</title>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<!--@if(IS_DEV_SERVER)--><link rel="shortcut icon" href="{{SYS_COMMON_CDN}}/sysop/favicon_devsysop.ico" /><!--/if(IS_DEV_SERVER)-->
+<!--@nif(IS_DEV_SERVER)--><link rel="shortcut icon" href="{{SYS_COMMON_CDN}}/sysop/favicon_servicesysop.ico" /><!--/nif(IS_DEV_SERVER)-->
+<link rel="stylesheet" type="text/css" href="/sysop/html/css/admin2.css" />
+<link rel="stylesheet" type="text/css" href="{{SYS_COMMON_CDN}}/common/css/fontawesome/css/font-awesome.min.css">
+<script type="text/javascript" src="{{SYS_COMMON_CDN}}/common/js/jquery-1.12.3.min.js" charset="utf-8"></script>
+<script type="text/javascript" src="/common/js/common.js?t={{SYS_TODAY}}165002"></script>
+<script type="text/javascript" src="{{SYS_COMMON_CDN}}/common/js/admin_func.js?t={{SYS_TODAY}}165001"></script>
+<style type="text/css">
+/* =====================================================
+   Modern Shell — layout_modern.html
+   NCP-style: Top Tab Navigation + Mega Menu Dropdown
+   ===================================================== */
+html, body { height: 100%; margin: 0; overflow: hidden; background: var(--bg-base); }
+
+#modern-shell {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+}
+
+/* ── 헤더 바 ── */
+#modern-header {
+    height: 48px;
+    background: #1e293b;
+    display: flex;
+    align-items: center;
+    padding: 0 16px;
+    gap: 0;
+    flex-shrink: 0;
+    position: relative;
+    z-index: 100;
+}
+
+/* 햄버거 메뉴 버튼 */
+.mh-menu-btn {
+    height: 48px;
+    padding: 0 14px;
+    border: none;
+    background: transparent;
+    color: rgba(255,255,255,0.9);
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 13px;
+    font-weight: 600;
+    font-family: var(--font);
+    transition: background 0.15s;
+    white-space: nowrap;
+}
+.mh-menu-btn:hover { background: rgba(255,255,255,0.08); }
+.mh-menu-btn.active { background: rgba(255,255,255,0.12); }
+.mh-menu-btn i { font-size: 16px; }
+
+/* 구분선 */
+.mh-sep {
+    width: 1px;
+    height: 20px;
+    background: rgba(255,255,255,0.15);
+    margin: 0 4px;
+    flex-shrink: 0;
+}
+
+/* 탭 스크롤 영역 */
+.mh-tabs {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    overflow-x: auto;
+    scrollbar-width: none;
+    padding: 0 4px;
+    min-width: 0;
+}
+.mh-tabs::-webkit-scrollbar { display: none; }
+
+/* 개별 탭 */
+.mh-tab {
+    display: inline-flex;
+    align-items: center;
+    height: 32px;
+    padding: 0 14px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 500;
+    color: rgba(255,255,255,0.55);
+    background: transparent;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.12s;
+    text-decoration: none;
+    border: none;
+    gap: 6px;
+    flex-shrink: 0;
+}
+.mh-tab:hover { background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.9); text-decoration: none; }
+.mh-tab.active { background: rgba(255,255,255,0.15); color: #fff; font-weight: 600; }
+.mh-tab .tab-x {
+    width: 16px; height: 16px;
+    border-radius: 3px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    opacity: 0;
+    transition: all 0.1s;
+    color: rgba(255,255,255,0.4);
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+}
+.mh-tab:hover .tab-x { opacity: 1; }
+.mh-tab .tab-x:hover { background: rgba(255,255,255,0.15); color: #fff; }
+
+/* 탭 빈 상태 */
+.mh-tabs-empty {
+    font-size: 12px;
+    color: rgba(255,255,255,0.3);
+    white-space: nowrap;
+    padding: 0 8px;
+}
+
+/* 우측 유틸리티 */
+.mh-right {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-left: auto;
+    flex-shrink: 0;
+    padding-left: 12px;
+}
+.mh-user {
+    font-size: 12px;
+    color: rgba(255,255,255,0.7);
+    white-space: nowrap;
+}
+.mh-user strong { color: #fff; font-weight: 600; }
+.mh-btn {
+    height: 28px;
+    padding: 0 10px;
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 4px;
+    background: transparent;
+    font-size: 11px;
+    color: rgba(255,255,255,0.7);
+    cursor: pointer;
+    font-family: var(--font);
+    transition: all 0.12s;
+    white-space: nowrap;
+}
+.mh-btn:hover { background: rgba(255,255,255,0.1); color: #fff; border-color: rgba(255,255,255,0.3); }
+
+/* =====================================================
+   메가 메뉴 드롭다운 (NCP 스타일)
+   ===================================================== */
+#mega-menu {
+    display: none;
+    position: absolute;
+    top: 48px;
+    left: 0; right: 0;
+    background: #fff;
+    border-bottom: 2px solid var(--primary);
+    box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+    z-index: 99;
+    max-height: calc(100vh - 48px);
+    overflow: hidden;
+}
+#mega-menu.open { display: block; }
+
+/* 메가메뉴 1depth 탭 */
+.mm-gnb {
+    display: flex;
+    align-items: stretch;
+    background: var(--bg-th);
+    border-bottom: 1px solid var(--border);
+    padding: 0 16px;
+    overflow-x: auto;
+    scrollbar-width: none;
+}
+.mm-gnb::-webkit-scrollbar { display: none; }
+.mm-gnb-item {
+    padding: 10px 16px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-muted);
+    cursor: pointer;
+    white-space: nowrap;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+    transition: all 0.12s;
+    background: none;
+    border-top: none;
+    border-left: none;
+    border-right: none;
+    font-family: var(--font);
+}
+.mm-gnb-item:hover { color: var(--text-base); }
+.mm-gnb-item.active {
+    color: var(--primary);
+    font-weight: 600;
+    border-bottom-color: var(--primary);
+}
+
+/* 메가메뉴 2/3depth 영역 */
+.mm-body {
+    padding: 16px 20px;
+    min-height: 200px;
+    max-height: 400px;
+    overflow-y: auto;
+}
+.mm-loading {
+    text-align: center;
+    padding: 40px;
+    color: var(--text-light);
+    font-size: 13px;
+}
+
+/* 2depth 그룹 */
+.mm-group {
+    margin-bottom: 16px;
+}
+.mm-group-title {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text-muted);
+    padding: 0 0 6px;
+    margin-bottom: 6px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+.mm-group-title i { color: var(--text-light); font-size: 11px; }
+
+/* 3depth 아이템 */
+.mm-items {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2px 0;
+}
+.mm-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 5px 12px;
+    border-radius: 4px;
+    font-size: 13px;
+    color: var(--text-base);
+    cursor: pointer;
+    transition: all 0.1s;
+    text-decoration: none;
+    white-space: nowrap;
+    min-width: 140px;
+}
+.mm-item:hover { background: var(--primary-light); color: var(--primary); text-decoration: none; }
+.mm-item .mm-pin {
+    width: 18px; height: 18px;
+    border-radius: 3px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    color: var(--text-light);
+    opacity: 0;
+    transition: all 0.1s;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    flex-shrink: 0;
+}
+.mm-item:hover .mm-pin { opacity: 1; }
+.mm-item .mm-pin.pinned { opacity: 1; color: var(--warning); }
+.mm-item .mm-pin:hover { background: var(--bg-th); }
+
+/* 메가메뉴 백드롭 */
+#mega-backdrop {
+    display: none;
+    position: fixed;
+    top: 48px;
+    left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.2);
+    z-index: 98;
+}
+#mega-backdrop.show { display: block; }
+
+/* =====================================================
+   콘텐츠 영역
+   ===================================================== */
+#modern-content {
+    flex: 1;
+    overflow: hidden;
+}
+#modern-content iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+    display: block;
+}
+</style>
+</head>
+<body>
+
+<div id="modern-shell">
+
+    <!-- ── 헤더 바 (다크) ── -->
+    <header id="modern-header">
+        <button class="mh-menu-btn" id="mega-toggle" onclick="toggleMegaMenu()">
+            <i class="fa fa-bars"></i> Menu
+        </button>
+        <div class="mh-sep"></div>
+        <div class="mh-tabs" id="mh-tabs">
+            <!-- JS 렌더링 -->
+        </div>
+        <div class="mh-right">
+            <span class="mh-user"><strong>{{user_name}}</strong>님</span>
+            <!--@if(super_block)-->
+            <button class="mh-btn" onclick="window.open('https://help.malgnsoft.com/');">고객센터</button>
+            <!--/if(super_block)-->
+            <button class="mh-btn" onclick="window.open('/main/index.jsp');">사이트</button>
+            <button class="mh-btn" onclick="switchToClassic();">클래식</button>
+            <button class="mh-btn" onclick="if(confirm('로그아웃하시겠습니까?')) location.href='../main/logout.jsp';">로그아웃</button>
+        </div>
+    </header>
+
+    <!-- ── 메가 메뉴 드롭다운 ── -->
+    <div id="mega-backdrop" onclick="closeMegaMenu()"></div>
+    <div id="mega-menu">
+        <!--@include(BODY)-->
+    </div>
+
+    <!-- ── 콘텐츠 ── -->
+    <div id="modern-content">
+        <iframe name="_Main" id="_Main" src="../main/index.jsp" frameborder="0"></iframe>
+    </div>
+</div>
+
+<script type="text/javascript">
+var sys_userkind = '{{SYS_USERKIND}}';
+var MY_MENU_KEY = "sysop_my_menu";
+
+/* =====================================================
+   탭 렌더링 (내 메뉴 from localStorage)
+   ===================================================== */
+function renderTabs() {
+    var list = getMyMenu();
+    var el = document.getElementById("mh-tabs");
+
+    if(list.length === 0) {
+        el.innerHTML = '<span class="mh-tabs-empty">★ Menu에서 즐겨찾기를 추가하세요</span>';
+        return;
+    }
+    var html = "";
+    for(var i = 0; i < list.length; i++) {
+        html += '<a class="mh-tab" href="' + esc(list[i].url) + '" target="_Main" onclick="onTabClick(this)">'
+             + esc(list[i].nm)
+             + '<button class="tab-x" onclick="removeMyMenu(event,' + i + ')">&times;</button>'
+             + '</a>';
+    }
+    el.innerHTML = html;
+}
+
+function onTabClick(el) {
+    $(".mh-tab").removeClass("active");
+    $(el).addClass("active");
+    closeMegaMenu();
+}
+
+/* =====================================================
+   내 메뉴 localStorage 관리
+   ===================================================== */
+function getMyMenu() {
+    try { return JSON.parse(localStorage.getItem(MY_MENU_KEY) || "[]"); } catch(e) { return []; }
+}
+function saveMyMenu(list) {
+    localStorage.setItem(MY_MENU_KEY, JSON.stringify(list));
+}
+function addMyMenu(nm, url, gnb) {
+    var list = getMyMenu();
+    for(var i = 0; i < list.length; i++) { if(list[i].url === url) return; } // 중복 방지
+    list.push({ nm: nm, url: url, gnb: gnb });
+    saveMyMenu(list);
+    renderTabs();
+    refreshPins();
+}
+function removeMyMenu(e, idx) {
+    if(e) { e.preventDefault(); e.stopPropagation(); }
+    var list = getMyMenu();
+    if(idx >= 0 && idx < list.length) {
+        list.splice(idx, 1);
+        saveMyMenu(list);
+        renderTabs();
+        refreshPins();
+    }
+}
+function toggleMyMenu(nm, url, gnb) {
+    var list = getMyMenu();
+    var found = -1;
+    for(var i = 0; i < list.length; i++) { if(list[i].url === url) { found = i; break; } }
+    if(found >= 0) list.splice(found, 1);
+    else list.push({ nm: nm, url: url, gnb: gnb });
+    saveMyMenu(list);
+    renderTabs();
+    refreshPins();
+}
+function isMyMenu(url) {
+    var list = getMyMenu();
+    for(var i = 0; i < list.length; i++) { if(list[i].url === url) return true; }
+    return false;
+}
+
+/* =====================================================
+   메가 메뉴
+   ===================================================== */
+function toggleMegaMenu() {
+    var m = document.getElementById("mega-menu");
+    if(m.classList.contains("open")) closeMegaMenu();
+    else openMegaMenu();
+}
+function openMegaMenu() {
+    document.getElementById("mega-menu").classList.add("open");
+    document.getElementById("mega-backdrop").classList.add("show");
+    document.getElementById("mega-toggle").classList.add("active");
+}
+function closeMegaMenu() {
+    document.getElementById("mega-menu").classList.remove("open");
+    document.getElementById("mega-backdrop").classList.remove("show");
+    document.getElementById("mega-toggle").classList.remove("active");
+}
+
+/* 1depth 클릭 → 2/3depth AJAX 로드 */
+function loadGnbMenu(mid, el) {
+    $(".mm-gnb-item").removeClass("active");
+    $(el).addClass("active");
+
+    var body = document.getElementById("mm-body");
+    body.innerHTML = '<div class="mm-loading"><i class="fa fa-spinner fa-spin"></i> 불러오는 중...</div>';
+
+    $.get("../main/menu2.jsp?mode=json&mid=" + mid + "&t=" + Date.now(), function(data) {
+        var items;
+        try { items = JSON.parse(data); } catch(e) { body.innerHTML = '<div class="mm-loading">메뉴를 불러올 수 없습니다.</div>'; return; }
+
+        var gnbName = $(el).text().trim();
+        // 2depth 그룹핑
+        var groups = {};
+        var groupOrder = [];
+        for(var i = 0; i < items.length; i++) {
+            var item = items[i];
+            if(item.depth == 2) {
+                groups[item.id] = { name: item.name, icon: item.icon, children: [] };
+                groupOrder.push(item.id);
+            }
+        }
+        for(var i = 0; i < items.length; i++) {
+            var item = items[i];
+            if(item.depth == 3 && groups[item.parent_id]) {
+                groups[item.parent_id].children.push(item);
+            }
+        }
+
+        var html = "";
+        for(var g = 0; g < groupOrder.length; g++) {
+            var grp = groups[groupOrder[g]];
+            if(grp.children.length === 0) continue;
+            html += '<div class="mm-group">';
+            html += '<div class="mm-group-title">' + (grp.icon ? '<i class="fa ' + grp.icon + '"></i> ' : '') + esc(grp.name) + '</div>';
+            html += '<div class="mm-items">';
+            for(var c = 0; c < grp.children.length; c++) {
+                var ch = grp.children[c];
+                var url = ch.link || "";
+                var pinned = isMyMenu(url);
+                html += '<a class="mm-item" href="' + esc(url) + '" target="_Main" onclick="closeMegaMenu()">'
+                     + esc(ch.name)
+                     + '<button class="mm-pin' + (pinned ? ' pinned' : '') + '" onclick="event.preventDefault();event.stopPropagation();toggleMyMenu(\'' + esc(ch.name).replace(/'/g,"\\'") + "','" + esc(url).replace(/'/g,"\\'") + "','" + esc(gnbName).replace(/'/g,"\\'") + "')\" title=\"즐겨찾기\">"
+                     + '<i class="fa fa-star"></i></button>'
+                     + '</a>';
+            }
+            html += '</div></div>';
+        }
+        if(!html) html = '<div class="mm-loading">하위 메뉴가 없습니다.</div>';
+        body.innerHTML = html;
+        refreshPins();
+    }).fail(function() {
+        body.innerHTML = '<div class="mm-loading">메뉴를 불러올 수 없습니다.</div>';
+    });
+}
+
+/* 핀 상태 갱신 */
+function refreshPins() {
+    $(".mm-pin").each(function() {
+        var item = $(this).closest(".mm-item");
+        var url = item.attr("href");
+        $(this).toggleClass("pinned", isMyMenu(url));
+    });
+}
+
+/* =====================================================
+   레이아웃 전환
+   ===================================================== */
+function switchToClassic() {
+    localStorage.removeItem("sysop_layout_mode");
+    location.href = "/sysop/index.jsp";
+}
+
+/* =====================================================
+   유틸리티
+   ===================================================== */
+function esc(s) {
+    if(!s) return "";
+    var d = document.createElement("div");
+    d.appendChild(document.createTextNode(s));
+    return d.innerHTML;
+}
+
+/* iframe 크기 (기존 호환) */
+function calcSize() {
+    try { _Main.resizeLayer($("#_Main").width(), $("#_Main").height()); } catch(e) {}
+}
+$(window).resize(function() { calcSize(); });
+
+/* iframe 로드 시 메가메뉴 닫기 */
+$("#_Main").on("load", function() {
+    closeMegaMenu();
+});
+
+/* ESC 키 → 메가메뉴 닫기 */
+$(document).on("keydown", function(e) {
+    if(e.key === "Escape") closeMegaMenu();
+});
+
+/* =====================================================
+   초기화
+   ===================================================== */
+$(document).ready(function() {
+    renderTabs();
+
+    // localStorage 변경 감지 (다른 탭에서 변경 시)
+    window.addEventListener("storage", function(e) {
+        if(e.key === MY_MENU_KEY) { renderTabs(); refreshPins(); }
+    });
+
+    // 첫 번째 GNB 자동 선택
+    var firstGnb = $(".mm-gnb-item").first();
+    if(firstGnb.length) firstGnb.click();
+});
+</script>
+
+</body>
+</html>

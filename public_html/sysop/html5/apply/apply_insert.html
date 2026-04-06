@@ -1,0 +1,151 @@
+<script language="javascript" type="text/javascript">initEditor("default");</script>
+<form name="form1" method="post" onsubmit="return goSumbit(this)">
+<input type="hidden" name="mode" value="" />
+<table class="c_tb01" cellpadding="0" cellspacing="0">
+    <tr>
+        <td class="c_th01"><!--@nif(modify)-->등록<!--/nif(modify)--><!--@if(modify)-->수정<!--/if(modify)--></td>
+        <td class="c_td01"></td>
+    </tr>
+</table>
+
+<table class="f_tb01" cellpadding="0" cellspacing="0">
+<colgroup>
+<col width="60">
+<col width="120">
+</colgroup>
+<tr>
+    <td class="f_th01">코드 *</td>
+    <td class="f_td01">
+        <input type="text" name="apply_cd" size="20" />
+        <span class="desc01"> 사용할 수 없는 코드 : init, index, page</span>
+    </td>
+</tr>
+<tr>
+    <td class="f_th01">페이지명 *</td>
+    <td class="f_td01"><input type="text" name="apply_nm" size="90" /></td>
+</tr>
+<tr>
+    <td class="f_th01">이용기간 *</td>
+    <td class="f_td01">
+        <input type="text" name=apply_sdate size="10" class="cal02 cdate" _cvalue="{apply_sdate}}"> -
+        <input type="text" name="apply_edate" size="10" class="cal02 cdate" _cvalue="{{apply_edate}}">
+    </td>
+
+</tr>
+<tr>
+    <td class="f_th01">상단 텍스트</td>
+    <td class="f_td01"><textarea id="content" name="apply_text" style="width:100%;height:250px;">{{apply_text}}</textarea></td>
+</tr>
+<tr>
+    <td class="f_th01">
+        신청서 내용
+        <!--@if(apply_user_block)-->
+        <button type="button" class="btn_simp" onclick="addEtc()">추가</button>
+        <!--/if(apply_user_block)-->
+    </td>
+    <td class="f_td01 etc_fields">
+        <div class="etc_field" style="margin-bottom: 5px;margin-top:5px;">
+            <input type="text" name="etc_subject1"> &nbsp;&nbsp;
+            <select name="etc_type1">
+                <option value="text">텍스트-단일행</option>
+                <option value="select">선택목록</option>
+                <option value="radio">단일선택</option>
+                <option value="checkbox">다중선택</option>
+                <option value="date">날짜</option>
+                <option value="address">주소</option>
+                <option value="textarea">텍스트-다중행</option>
+                <option value="">섹션</option>
+            </select> /
+            목록 값 <input type="text" name="etc_default1" placeholder="바(|)로 구분">
+            <!--@if(apply_user_block)-->
+            <button type="button" class="btn_simp" onclick="delEtc(this);">삭제</button>
+            <!--/if(apply_user_block)-->
+        </div>
+    </td>
+</tr>
+<!--@if(modify)-->
+<tr>
+    <td class="f_th01">
+        상태
+    </td>
+    <td class="f_td01">
+        <label class="switch01"><input type="checkbox" name="status" value="1"></label>
+    </td>
+</tr>
+<!--/if(modify)-->
+</table>
+
+<table class="b_tb01" cellpadding="0" cellspacing="0">
+    <tr>
+        <td class="b_th01"><button type="button" class="bttn2" onclick="location.href='apply_list.jsp?{{list_query}}'">목록</button></td>
+        <td class="b_td01">
+            <!--@nif(modify)-->
+            <button type="submit" class="bttn2">등록</button>
+            <!--/nif(modify)-->
+            <!--@if(modify)-->
+            <!--@if(apply_user_block)-->
+            <button type="submit" class="bttn2 sky">수정</button>
+            <button type="button" class="bttn2 red" onclick="BtnConfirmGo('삭제', 'apply_delete.jsp?{{query}}');">삭제</button>
+            <!--/if(apply_user_block)-->
+            <!--/if(modify)-->
+        </td>
+    </tr>
+</table>
+</form>
+{{form_script}}
+
+<script>
+var count = 2;
+function addEtc(){
+
+    var newRow = $(".etc_field").eq(0).clone();
+    newRow.find("input[type='text']").val('');
+    newRow.find("select").val('text');
+    newRow.find("input[type='checkbox']").prop('checked', false);
+    $(".etc_fields").append(newRow);
+
+    updateNames();
+    count++;
+}
+function delEtc(v) {
+    var etcFields = $(".etc_fields .etc_field");
+    if(etcFields.length > 1) {
+        $(v).closest('.etc_field').remove();
+        updateNames();
+    }
+}
+
+function updateNames() {
+    var etcFields = $(".etc_fields .etc_field");
+    etcFields.each(function(index, v) {
+        var cntSubject = "etc_subject" + (index + 1);
+        var cntType = "etc_type" + (index + 1);
+        var cntDefault = "etc_default" + (index + 1);
+        $(this).find("input[name^='etc_subject']").attr("name", cntSubject);
+        $(this).find("select[name^='etc_type']").attr("name", cntType);
+        $(this).find("input[name^='etc_default']").attr("name", cntDefault);
+    });
+}
+
+<!--@if(modify)-->
+$(document).ready(function(){
+    var data = {{etc_field}};
+
+    var keys = Object.keys(data);
+    var maxIndex = 0;
+    keys.forEach(function(key) {
+        var match = key.match(/(\d+)$/);
+        if (match && parseInt(match[1]) > maxIndex) {
+            maxIndex = parseInt(match[1]);
+        }
+    });
+
+    for (var i = 1; i <= maxIndex; i++) {
+        if (i > 1) addEtc();
+        $("input[name='etc_subject" + i + "']").val(data["etc_subject" + i]);
+        $("select[name='etc_type" + i + "']").val(data["etc_type" + i]);
+        $("input[name='etc_default" + i + "']").val(data["etc_default" + i]);
+    }
+});
+<!--/if(modify)-->
+</script>

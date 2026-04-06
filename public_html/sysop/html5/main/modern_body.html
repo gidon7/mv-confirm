@@ -1,0 +1,70 @@
+<!-- ═══════════════════════════════════════════════════
+     App Header (Top Bar)
+     ═══════════════════════════════════════════════════ -->
+<header id="app-header">
+    <div class="header-left">
+        <a href="/sysop/main/modern.jsp" class="header-logo">
+            <span class="header-logo-icon">M</span>
+            <span>{{SYS_SITE_NM}}</span>
+        </a>
+        <button type="button" class="header-menu-btn" onclick="Admin5.toggleSubmenu()">
+            <i class="fa fa-bars"></i>
+        </button>
+    </div>
+    <div class="header-right">
+        <div class="header-user" title="{{user_name}}">
+            <i class="fa fa-user"></i>
+        </div>
+        <!--@if(super_block)-->
+        {{super_block}}
+        <!--/if(super_block)-->
+        <a href="/sysop/main/help.jsp" class="header-btn outlined" target="_blank">
+            <i class="fa fa-headphones"></i> 고객센터
+        </a>
+        <a href="/" class="header-btn outlined" target="_blank">
+            <i class="fa fa-external-link"></i> 홈페이지
+        </a>
+    </div>
+</header>
+
+<!-- ═══════════════════════════════════════════════════
+     App Body (Sidebar + Content)
+     ═══════════════════════════════════════════════════ -->
+<div id="app-body">
+
+    <!-- ─── Icon Navigation (1depth) ─── -->
+    <nav id="icon-nav">
+        <!--@loop(list)-->
+        <a class="icon-nav-item {{list.current}}" data-mid="{{list.id}}" onclick="Admin5.selectGnb(this, '{{list.id}}', '{{list.name}}'); return false;" href="#">
+            <i class="fa {{list.icon}}"></i>
+            <span>{{list.name}}</span>
+        </a>
+        <!--/loop(list)-->
+        <div class="icon-nav-spacer"></div>
+        <a class="icon-nav-item icon-nav-help" href="/sysop/main/help.jsp" target="_blank">
+            <i class="fa fa-question-circle"></i>
+            <span>Help</span>
+        </a>
+    </nav>
+
+    <!-- ─── Submenu Panel (2/3depth) ─── -->
+    <aside id="submenu-panel">
+        <div id="submenu-header">
+            <span id="submenu-title">메뉴</span>
+            <button type="button" onclick="Admin5.toggleSubmenu()">
+                <i class="fa fa-chevron-up"></i>
+            </button>
+        </div>
+        <div id="submenu-list">
+            <!-- AJAX loaded from menu2.jsp?mode=json -->
+        </div>
+    </aside>
+
+    <!-- ─── Main Content ─── -->
+    <main id="app-content">
+        <div id="page-content">
+            <div class="page-loading">불러오는 중...</div>
+        </div>
+    </main>
+
+</div>
