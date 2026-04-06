@@ -1,19 +1,33 @@
-<!-- layout_admin.html에서 CSS/JS를 이미 로드함 -->
+<!-- layout_blank.html에서 CSS/JS를 이미 로드함 -->
 
-<!-- 1depth GNB 탭 -->
-<div id="gnb">
-	<ul id="top_menu">
-		<!--@loop(list)-->
-		<li><a href="#" onclick="return go(this);" class="{{list.current}}" id="{{list.id}}">{{list.name}}</a></li>
-		<!--/loop(list)-->
-	</ul>
-</div>
-
-<!-- 2-3depth 아코디언 (AJAX로 채워짐) -->
-<div id="lnb_wrapper">
-	<div id="lnb_contents_wrapper">
-		<div id="lnb_contents">
-			<ul class="acc-nav" id="lnb-0"></ul>
+<div id="top_contents">
+	<div id="logo">
+		<a class="txt_logo" href="../main/index.jsp" target="_Main"><i class="fa fa-desktop"></i> 교육통합관리시스템</a>
+	</div>
+	<div id="gnb">
+		<ul id="top_menu">
+			<!--@loop(list)-->
+			<li><a href="#" onclick="return go(this);" class="{{list.current}}" id="{{list.id}}">{{list.name}}</a></li>
+			<!--/loop(list)-->
+		</ul>
+	</div>
+	<div id="utility">
+		<div id="buttons">
+			<button type="button" class="top_button" onclick="top.location.href='/sysop/main/modern.jsp';" style="background:linear-gradient(135deg,#6366f1,#2563eb); color:#fff; border:none; font-weight:600;"><i class="fa fa-th-large"></i> 모던</button>
+			<button type="button" class="top_button blue" onclick="if(confirm('로그아웃하시겠습니까?')) top.location.href='../main/logout.jsp';">{{sysop.logout}}로그아웃</button>
+			<!--@if(super_block)--><button type="button" class="top_button green" onclick="window.open('https://help.malgnsoft.com/');">고객센터 <i class="fa fa-angle-right" aria-hidden="true"></i></button><!--/if(super_block)-->
+			<button type="button" class="top_button white" onclick="window.open('/main/index.jsp');">{{sysop.sitelink}}사이트 <i class="fa fa-angle-right" aria-hidden="true"></i></button>
+			<!--@if(super_malgn_block)-->
+			<a href="../alog/alog_list.jsp" target="_Main"><button type="button" class="top_button blue">액션로그</button></a>
+			<!--/if(super_malgn_block)-->
+		</div>
+		<div id="user">
+			<strong>{{user_name}}</strong>{{sysop.welcome}}님, 환영합니다.<br>
+			<span>
+				<a href="javascript:void(0);" onclick="OpenWindows('../main/page.jsp?code=clause', '__C', 1024, 800);" style="color:#efefef;">이용약관</a>
+				|
+				<a href="javascript:void(0);" onclick="OpenWindows('../main/page.jsp?code=privacy', '__C', 1024, 800);" style="color:#efefef;">개인정보처리방침</a>
+			</span>
 		</div>
 	</div>
 </div>
@@ -31,30 +45,16 @@ function go(el, mid, lnb) {
 	el.className = "current";
 
 	var menuId = el.getAttribute("id");
-	$.get("../main/menu2.jsp?mode=json&mid=" + menuId + "&t={{now}}", function(data) {
-		var items = JSON.parse(data);
-		$(".acc-nav").attr("id", "lnb-" + menuId).html("");
-		for(var i = 0; i < items.length; i++) {
-			addAccNode(menuId, items[i].id, items[i].parent_id, items[i].depth, items[i].name, items[i].link, items[i].target, items[i].open_yn, items[i].icon);
-		}
-		setAccNav();
-		try { $("#lnb_contents").mCustomScrollbar("update"); } catch(e) {}
-	}).fail(function() {
-		alert("메뉴를 불러오는 중 오류가 발생했습니다.");
-	});
+
+	// _Menu 프레임에 LNB 로드
+	try {
+		parent._Menu.location.href = "../main/menu2.jsp?mid=" + menuId + (lnb ? "&lnb=" + lnb : "") + "&t={{now}}";
+	} catch(e) {}
 
 	return false;
 }
 
 $(document).ready(function() {
-	document.getElementById("_Main").src = "../main/index.jsp";
-
-	$("#lnb_contents").mCustomScrollbar({
-		autoHideScrollbar: true,
-		theme: "minimal-dark",
-		scrollInertia: 0
-	});
-
 	go(null, "{{mid}}", "{{lnb}}");
 
 	$("#top_menu li a").each(function() {

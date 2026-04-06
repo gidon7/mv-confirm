@@ -1,0 +1,10 @@
+<!-- 메가 메뉴 — 1depth GNB 탭 -->
+<div class="mm-gnb">
+    <!--@loop(list)-->
+    <button class="mm-gnb-item" onclick="loadGnbMenu('{{list.id}}', this)">{{list.name}}</button>
+    <!--/loop(list)-->
+</div>
+<!-- 메가 메뉴 — 2/3depth 본문 (AJAX 로드) -->
+<div class="mm-body" id="mm-body">
+    <div class="mm-loading">1depth 메뉴를 선택하세요</div>
+</div>

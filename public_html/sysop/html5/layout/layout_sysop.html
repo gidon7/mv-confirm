@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{{SYS_TITLE}}</title>
+
+<!-- Fonts -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+<!-- Libraries CSS -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.13.2/themes/base/jquery-ui.min.css">
+
+<!-- Admin5 CSS -->
+<link rel="stylesheet" href="/sysop/html5/css/admin5.css">
+
+<!-- jQuery -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.13.2/jquery-ui.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
+
+<!-- Common JS -->
+<script src="{{SYS_COMMON_CDN}}/sysop/js/common.js"></script>
+</head>
+<body>
+
+<div id="app">
+
+    <!-- ═══ App Header (Top Bar) ═══ -->
+    <header id="app-header">
+        <div class="header-left">
+            <a href="/sysop/main/index.jsp" class="header-logo">
+                <span class="header-logo-icon">M</span>
+                <span>{{SYS_SITE_NM}}</span>
+            </a>
+            <button type="button" class="header-menu-btn" onclick="Admin5.toggleSubmenu()">
+                <i class="fa fa-bars"></i>
+            </button>
+        </div>
+        <div class="header-right">
+            <div class="header-user" title="{{SYS_USER_NM}}">
+                <i class="fa fa-user"></i>
+            </div>
+            <a href="/sysop/main/help.jsp" class="header-btn outlined" target="_blank">
+                <i class="fa fa-headphones"></i> 고객센터
+            </a>
+            <a href="/" class="header-btn outlined" target="_blank">
+                <i class="fa fa-external-link"></i> 홈페이지
+            </a>
+        </div>
+    </header>
+
+    <!-- ═══ App Body ═══ -->
+    <div id="app-body">
+
+        <!-- ─── Icon Nav (1depth) ─── -->
+        <nav id="icon-nav">
+            <!-- JS로 동적 생성 (Admin5.loadGnb) -->
+        </nav>
+
+        <!-- ─── Submenu Panel (2/3depth) ─── -->
+        <aside id="submenu-panel">
+            <div id="submenu-header">
+                <span id="submenu-title">메뉴</span>
+                <button type="button" onclick="Admin5.toggleSubmenu()">
+                    <i class="fa fa-chevron-up"></i>
+                </button>
+            </div>
+            <div id="submenu-list"></div>
+        </aside>
+
+        <!-- ─── Main Content ─── -->
+        <main id="app-content">
+            <div id="page-content">
+
+                <!-- ═══ 페이지 콘텐츠 (서버 렌더링) ═══ -->
+                <!--@include(BODY)-->
+
+            </div>
+        </main>
+
+    </div>
+
+</div>
+
+<!-- Toast Container -->
+<div id="toast-container"></div>
+
+<!-- Hidden frames (레거시 폼 서브밋 등) -->
+<iframe name="sysfrm" id="sysfrm" style="display:none;"></iframe>
+<iframe name="CalendarLayer" id="CalendarLayer" style="display:none;"></iframe>
+
+<!-- Admin5 JS -->
+<script src="/sysop/html5/js/admin5.js"></script>
+
+<script>
+// 페이지 로드 시 메뉴 초기화
+$(function() {
+    Admin5.init();
+});
+</script>
+
+</body>
+</html>

@@ -1,0 +1,232 @@
+<form name="form1" method="post" target="sysfrm">
+    <input type="hidden" name="temp_id" value="{{lesson_id}}">
+    <table class="c_tb01" cellpadding="0" cellspacing="0">
+        <tr>
+            <td class="c_th01"><!--@nif(modify)--> 등록<!--/nif(modify)--><!--@if(modify)--> 수정<!--/if(modify)--></td>
+            <td class="c_td01"></td>
+        </tr>
+    </table>
+
+    <table class="f_tb01" cellpadding="0" cellspacing="0" style="table-layout:fixed">
+        <col width="120"><col><col width="100"><col width="150">
+        <tr>
+            <td class="f_th01">강의타입*</td>
+            <td class="f_td01" colspan="3">
+                <!--@nif(modify)-->
+                <!--@if(boda_block)-->
+                <label><input type="radio" value="16" name="lesson_type" class="ipt01" onclick="setLessonType(this)"> 보다 </label>
+                <!--/if(boda_block)-->
+                <!--/nif(modify)-->
+                <!--@if(modify)-->
+                {{lesson_type_conv}}
+                <!--/if(modify)-->
+            </td>
+        </tr>
+        <tr>
+            <td class="f_th01">강의실타입*</td>
+            <td class="f_td01" id="lanedu-host-parent">
+                <!--@nif(modify)-->
+                <!--@if(boda_block)-->
+                <div id="boda-rooms">
+                    <!--@loop(boda_template_nums)-->
+                    <label><input type="radio" value="{{boda_template_nums.id}}" name="room_type" class="ipt01"> {{boda_template_nums.name}} </label> &nbsp;
+                    <!--/loop(boda_template_nums)-->
+                </div>
+                <!--/if(boda_block)-->
+                <!--@if(lanedu_block)-->
+                <div id="lanedu-rooms">
+                    <!--@loop(lanedu_room_types)-->
+                    <label><input type="radio" value="{{lanedu_room_types.id}}" name="room_type" class="ipt01"> {{lanedu_room_types.name}} </label> &nbsp;
+                    <!--/loop(lanedu_room_types)-->
+                </div>
+                <!--/if(lanedu_block)-->
+                <!--/nif(modify)-->
+                <!--@if(modify)-->
+                {{room_type_conv}}
+                <!--/if(modify)-->
+            </td>
+            <!--@if(lanedu_block)-->
+            <!--@nif(modify)-->
+            <td class="f_th01 lanedu-host">강의실</td>
+            <td class="f_td01 lanedu-host">
+                <select name="host_num" id="host_num">
+                    <!--@loop(hosts)-->
+                    <option value="{{hosts.id}}">{{hosts.name}}</option>
+                    <!--/loop(hosts)-->
+                </select>
+            </td>
+            <!--/nif(modify)-->
+            <!--/if(lanedu_block)-->
+        </tr>
+        <tr>
+            <td class="f_th01">강의명*</td>
+            <td class="f_td01" colspan="3"><input type="text" name="lesson_nm" size="70"></td>
+        </tr>
+        <!--@if(modify)-->
+        <!--@if(lesson_type:15)-->
+        <tr>
+            <td class="f_th01">강의URL</td>
+            <td class="f_td01" colspan="3">{{twoway_url}}</td>
+        </tr>
+        <!--/if(lesson_type:15)-->
+        <!--/if(modify)-->
+        <tr>
+            <td class="f_th01">강의시간</td>
+            <td class="f_td01" colspan="3">
+<!--                <input type="text" name="start_date" class="sdate" onclick="new CalendarFrame.Calendar(this, 'setEndDate()')" style="width:80px;" HNAME="시작일" REQUIRED="Y" readonly>-->
+                <input type="text" name="start_date" size="10" class="cal02 cdate" _cvalue="{{start_date}}"> -
+                <input type="hidden" name="end_date" class="edate">
+                <select name="start_time_hour" id="start_time_hour">
+                    <!--@loop(hours)-->
+                    <option value="{{hours.id}}">{{hours.id}}시</option>
+                    <!--/loop(hours)-->
+                </select>
+                <select name="start_time_min" id="start_time_min}">
+                    <!--@loop(minutes)-->
+                    <option value="{{minutes.id}}">{{minutes.id}}분</option>
+                    <!--/loop(minutes)-->
+                </select> -
+                <select name="end_time_hour" id="end_time_hour">
+                    <!--@loop(hours)-->
+                    <option value="{{hours.id}}">{{hours.id}}시</option>
+                    <!--/loop(hours)-->
+                </select>
+                <select name="end_time_min" id="end_time_min">
+                    <!--@loop(minutes)-->
+                    <option value="{{minutes.id}}">{{minutes.id}}분</option>
+                    <!--/loop(minutes)-->
+                </select>
+                <script>
+                    SetElementValue(document.getElementById("start_time_hour"), "{{start_time_hour}}");
+                    SetElementValue(document.getElementById("start_time_min"), "{{start_time_min}}");
+                    SetElementValue(document.getElementById("end_time_hour"), "{{end_time_hour}}");
+                    SetElementValue(document.getElementById("end_time_min"), "{{end_time_min}}");
+                </script>
+            </td>
+        </tr>
+        <tr>
+            <td class="f_th01">학습시간</td>
+            <td class="f_td01" colspan="3">
+                <input type="text" name="total_time" size="5" style="text-align:center"> 분
+                <span class="desc01"> 예상되는 화상강의 진행시간을 입력합니다. </span>
+            </td>
+        </tr>
+        <tr>
+            <td class="f_th01">인정시간</td>
+            <td class="f_td01" colspan="3">
+                <input type="text" name="complete_time" size="5" style="text-align:center"> 분
+                <span class="desc01"> 진도율이 100%가 되는 최소 학습시간입니다. <strong>0</strong> 입력시 강의 참여만으로 진도율을 100%로 인정합니다.</span>
+            </td>
+        </tr>
+        <tr>
+            <td class="f_th01">콘텐츠크기</td>
+            <td class="f_td01" colspan="3">
+                너비 : <input type="text" name="content_width" size="5" style="text-align:center"> px
+                높이 : <input type="text" name="content_height" size="5" style="text-align:center"> px &nbsp;
+                <div class="desc01" style="margin-top:5px;">콘텐츠가 열리는 팝업창의 크기이며, 1980 x 1080(FHD)를 권장합니다.</div>
+            </td>
+        </tr>
+        <tr>
+            <td class="f_th01">담임강사*</td>
+            <td class="f_td01" colspan="3">
+                <select name="tutor_id" id="tutor_id" class="js-example-basic-single">
+                    <option value="">- 선택 -</option>
+                    <!--@loop(tutors)-->
+                    <option value="{{tutors.user_id}}">{{tutors.tutor_nm}} ({{tutors.login_id}})</option>
+                    <!--/loop(tutors)-->
+                </select>
+            </td>
+        </tr>
+        <!--@nif(course_manager_block)-->
+        <tr>
+            <td class="f_th01">담당자</td>
+            <td class="f_td01" colspan="3">
+                <select name="manager_id" class="js-example-basic-single">
+                    <option value=""> - 담당자 선택 - </option>
+                    <option value="-99"> [공용] 모든 최고관리자, 운영자, 과정운영자 </option>
+                    <!--@loop(managers)-->
+                    <option value="{{managers.id}}">[{{managers.kind_conv}}] {{managers.user_nm}}</option>
+                    <!--/loop(managers)-->
+                </select>
+            </td>
+        </tr>
+        <!--/nif(course_manager_block)-->
+        <tr>
+            <td class="f_th01">
+                교안 파일
+            </td>
+            <td class="f_td01" colspan="3">
+                <iframe id="fileupload" name="fileupload" frameborder="0" src="../content/attach_lesson.jsp?lid={{lesson_id}}&nodesc=1" width="100%" height="130" scrolling="no" ></iframe>
+            </td>
+        </tr>
+        <!--@if(modify)-->
+        <tr>
+            <td class="f_th01">등록일시</td>
+            <td class="f_td01" colspan="3">{{reg_date_conv}}</td>
+        </tr>
+        <!--/if(modify)-->
+        <tr>
+            <td class="f_th01">상태</td>
+            <td class="f_td01" colspan="3">
+                <!--@loop(status_list)-->
+                <label><input type="radio" value="{{status_list.id}}" name="status" class="ipt01"> {{status_list.name}} </label> &nbsp;
+                <!--/loop(status_list)-->
+            </td>
+        </tr>
+    </table>
+
+    <table class="b_tb01" cellpadding="0" cellspacing="0">
+        <tr>
+            <td class="b_th01">
+                <!--@if(lanedu_block)-->
+                <!--@if(lesson_type:15)-->
+                <button type="button" class="bttn2" onclick="OpenWindows('../twoway/lesson_list.jsp', '_CLTL', 1200, 800);">화상강의일정</button>
+                <!--/if(lesson_type:15)-->
+                <!--/if(lanedu_block)-->
+            </td>
+            <td class="b_td01">
+                <button type="submit" class="bttn2" onsubmit="goSubmit(this);">
+                    <!--@nif(modify)-->등록<!--/nif(modify)-->
+                    <!--@if(modify)-->수정<!--/if(modify)-->
+                </button>
+            </td>
+        </tr>
+    </table>
+</form>
+{{form_script}}
+
+<script>
+    function setDouble(el, len) {
+        var v = parseFloat(el.value);
+        if(isNaN(v)) v = 1;
+        el.value = v.toFixed(len);
+    }
+    function setLessonType(el) {
+        if(el.value === "15") {
+            $(".lanedu-host").show();
+            $("#lanedu-rooms").show();
+            $("#boda-rooms").hide();
+            $("#lanedu-host-parent").attr("colspan", 1);
+            $("#lanedu-rooms input[name=room_type][value=H]").prop("checked", true);
+            $(".lanedu-host > select[name=host_num]").prop("required", true);
+        } else if(el.value === "16") {
+            $(".lanedu-host").hide();
+            $("#lanedu-rooms").hide();
+            $("#boda-rooms").show();
+            $("#lanedu-host-parent").attr("colspan", 3);
+            $("#boda-rooms input[name=room_type][value=140]").prop("checked", true);
+            $(".lanedu-host > select[name=host_num]").prop("required", false);
+        }
+    }
+    function goSubmit(f) {
+        if(!validate(f)) return false;
+    }
+    $(document).ready(function() {
+        <!--@if(boda_block)-->
+        $("#lanedu-rooms").hide();
+        $(".lanedu-host").hide();
+        $("#lanedu-host-parent").attr("colspan", 3);
+        SetFormValue("form1", "room_type", "140");
+        <!--/if(boda_block)-->
+    })
+</script>

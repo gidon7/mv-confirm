@@ -1,29 +1,144 @@
 <!-- layout_blank.html에서 admin2.css, mCustomScrollbar CSS/JS, jQuery를 이미 로드함 (중복 제거) -->
+
 <script type="text/javascript">
+var MY_MENU_KEY = "sysop_my_menu";
+
+/* ── localStorage 헬퍼 ── */
+function getMyMenu() {
+	try { return JSON.parse(localStorage.getItem(MY_MENU_KEY) || "[]"); } catch(e) { return []; }
+}
+function saveMyMenu(list) {
+	localStorage.setItem(MY_MENU_KEY, JSON.stringify(list));
+}
+function myMenuHas(url) {
+	return getMyMenu().some(function(m) { return m.url === url; });
+}
+function togglePin(nm, url, gnb) {
+	var list = getMyMenu();
+	var idx = -1;
+	for(var i=0; i<list.length; i++) { if(list[i].url === url) { idx = i; break; } }
+	if(idx >= 0) list.splice(idx, 1);
+	else list.push({ nm: nm, url: url, gnb: gnb });
+	saveMyMenu(list);
+	renderMyMenuBadge();
+	renderMyMenuList();
+	// 핀 버튼 상태 갱신
+	$("#lnb_contents .acc-sub a").each(function() {
+		if($(this).attr("href") === url) {
+			$(this).find(".pin-btn").toggleClass("pinned", idx < 0).attr("title", idx < 0 ? "내 메뉴에서 제거" : "내 메뉴에 추가");
+		}
+	});
+}
+
+/* ── 뱃지 ── */
+function renderMyMenuBadge() {
+	var cnt = getMyMenu().length;
+	cnt > 0 ? $("#mm-badge").text(cnt).show() : $("#mm-badge").hide();
+}
+
+/* ── 내 메뉴 목록 렌더 ── */
+function renderMyMenuList() {
+	var list = getMyMenu();
+	var $el = $("#my-menu-list");
+	if(list.length === 0) {
+		$el.html('<div class="mm-empty"><i class="fa fa-star-o"></i><p>메뉴 항목 옆 ★을<br>눌러 추가하세요</p></div>');
+		return;
+	}
+	var html = "";
+	list.forEach(function(m) {
+		var safeNm  = m.nm.replace(/'/g, "\\'");
+		var safeUrl = m.url.replace(/'/g, "\\'");
+		var safeGnb = (m.gnb || "").replace(/'/g, "\\'");
+		html += '<div class="mm-item" onclick="window.open(\'' + safeUrl + '\',\'_Main\')">'
+			  +   '<div class="mm-item-info">'
+			  +     '<span class="mm-item-gnb">' + (m.gnb || "") + '</span>'
+			  +     '<span class="mm-item-name">' + m.nm + '</span>'
+			  +   '</div>'
+			  +   '<button class="mm-remove" title="삭제" onclick="event.stopPropagation();togglePin(\'' + safeNm + '\',\'' + safeUrl + '\',\'' + safeGnb + '\')"><i class="fa fa-times"></i></button>'
+			  + '</div>';
+	});
+	$el.html(html);
+}
+
+/* ── 모드 전환 ── */
+function setMode(mode) {
+	if(mode === "all") {
+		$("#mm-mode-all").prop("checked", true);
+		$("#my-menu-panel").hide();
+		$("#lnb_contents").show();
+		try { $("#lnb_contents").mCustomScrollbar("update"); } catch(e) {}
+	} else {
+		$("#mm-mode-my").prop("checked", true);
+		$("#lnb_contents").hide();
+		$("#my-menu-panel").show();
+		renderMyMenuList();
+	}
+}
+
+/* ── 전체 메뉴 토글 (내 메뉴 모드에서 추가용) ── */
+function toggleFullMenu(btn) {
+	var $arrow = $(btn).find(".mm-add-arrow");
+	var $lnb = $("#lnb_contents");
+	if($lnb.is(":visible")) {
+		$lnb.slideUp(180);
+		$arrow.removeClass("open");
+	} else {
+		$lnb.slideDown(180);
+		$arrow.addClass("open");
+		try { $lnb.mCustomScrollbar("update"); } catch(e) {}
+	}
+}
+
+/* ── 핀 버튼 삽입 ── */
+function addPinButtons() {
+	var currentGnb = "";
+	try { currentGnb = (parent._Top.document.getElementById("top_menu").querySelector("a.current").textContent || "").replace(/관리/g,"").trim(); } catch(e) {}
+
+	$("#lnb_contents .acc-sub a").each(function() {
+		var $a = $(this);
+		if($a.find(".pin-btn").length) return;
+		var nm  = $a.clone().children().remove().end().text().trim();
+		var url = $a.attr("href") || "";
+		if(!url || url === "#" || url === "javascript:void(0)") return;
+		var isPinned = myMenuHas(url);
+		var $pin = $('<button class="pin-btn' + (isPinned ? " pinned" : "") + '" title="' + (isPinned ? "내 메뉴에서 제거" : "내 메뉴에 추가") + '"><i class="fa fa-star"></i></button>');
+		$pin.on("click", function(e) {
+			e.preventDefault(); e.stopPropagation();
+			var nowPinned = $(this).hasClass("pinned");
+			$(this).toggleClass("pinned");
+			$(this).attr("title", nowPinned ? "내 메뉴에 추가" : "내 메뉴에서 제거");
+			togglePin(nm, url, currentGnb);
+		});
+		$a.append($pin);
+	});
+}
+
 $(document).ready(function() {
 	<!--@loop(list)-->
 	addAccNode('{{mid}}', '{{list.id}}', '{{list.parent_id}}', '{{list.depth}}', '{{list.name}}', '{{list.link}}', '{{list.target}}', '{{list.open_yn}}', '{{list.icon}}');
 	<!--/loop(list)-->
 
 	setAccNav();
-});
-</script>
 
-<!--[if gte IE 9]><!-->
-<script type="text/javascript">
-$(document).ready(function() {
-	$("#lnb_contents").mCustomScrollbar({
-		autoHideScrollbar:true,
-		theme:"minimal-dark",
-		scrollInertia:0
+	setTimeout(addPinButtons, 60);
+
+	// 기본 모드 결정
+	var defaultMode = getMyMenu().length > 0 ? "my" : "all";
+	setMode(defaultMode);
+
+	renderMyMenuBadge();
+
+	// 라디오 변경
+	$("input[name=mm_mode]").on("change", function() {
+		setMode($(this).val());
 	});
-});
-</script>
-<!--<![endif]-->
 
-<script type="text/javascript">
-$(document).ready(function() {
-	//if("{{lnb}}" != "") $(".acc-node-{{lnb}} > a").addClass("active");
+	// mCustomScrollbar
+	$("#lnb_contents").mCustomScrollbar({
+		autoHideScrollbar: true,
+		theme: "minimal-dark",
+		scrollInertia: 0
+	});
 });
 
 function goShortcut(el) {
@@ -33,6 +148,18 @@ function goShortcut(el) {
 	el.value = "";
 }
 </script>
+
+<!-- 전체/내 메뉴 모드 라디오 -->
+<div class="mm-mode-bar">
+	<label class="mm-mode-radio">
+		<input type="radio" name="mm_mode" value="all" id="mm-mode-all" checked>
+		<span>전체 메뉴</span>
+	</label>
+	<label class="mm-mode-radio">
+		<input type="radio" name="mm_mode" value="my" id="mm-mode-my">
+		<span>내 메뉴<span class="mm-badge" id="mm-badge" style="display:none"></span></span>
+	</label>
+</div>
 
 <div id="lnb_wrapper">
 	<div id="lnb_shortcut">
@@ -59,9 +186,23 @@ function goShortcut(el) {
 	</div>
 
 	<div id="lnb_contents_wrapper">
+
+		<!-- 내 메뉴 패널 -->
+		<div id="my-menu-panel" style="display:none;">
+			<div id="my-menu-list"></div>
+			<div class="mm-add-section">
+				<button class="mm-add-toggle" onclick="toggleFullMenu(this)">
+					<i class="fa fa-th-list"></i> 전체 메뉴에서 추가
+					<i class="fa fa-angle-down mm-add-arrow"></i>
+				</button>
+			</div>
+		</div>
+
+		<!-- 전체 메뉴 -->
 		<div id="lnb_contents">
 			<ul class="acc-nav" id="lnb-{{mid}}" style="width:100%;">
 			</ul>
 		</div>
+
 	</div>
 </div>

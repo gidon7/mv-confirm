@@ -14,16 +14,6 @@
 		<!--/loop(kinds)-->
 	</td>
 </tr>
-<!-- <tr>
-	<td class="t_th01">수강건수</td>
-	<td class="t_td01">
-		<input type="text" name="s_course_cnt" maxlength="3" size="4" class="ipt_right" value="0"> 건 이상
-	</td>
-	<td class="t_th01">실결제금액</td>
-	<td class="t_td01">
-		<input type="text" name="s_pay_price_sum" maxlength="8" size="10" class="ipt_right" value="0"> 원 이상
-	</td>
-</tr> -->
 <tr>
 	<td class="t_th01">상태</td>
 	<td class="t_td01">
@@ -115,13 +105,8 @@
 <table class="l_tb01" cellpadding="0" cellspacing="0">
 <col width="50">
 <col width="80">
-<!-- <col width="100"> -->
 <col>
 <col>
-<!--
-<col>
-<col width="130">
--->
 <!--@if(SYS_MINOR_YN)-->
 <col width="50">
 <!--/if(SYS_MINOR_YN)-->
@@ -137,13 +122,8 @@
 <tr align="center">
 	<td class="l_th01">No</td>
 	<td class="l_th01"><span class="l_sort01" id="CL_a.id" onclick="ListSort(this, '{{ord}}')">회원번호</span></td>
-	<!-- <td class="l_th01"><span class="l_sort01" id="CL_a.user_kind" onclick="ListSort(this, '{{ord}}')">유형</span></td> -->
 	<td class="l_th01"><span class="l_sort01" id="CL_d.dept_nm" onclick="ListSort(this, '{{ord}}')">소속</span></td>
 	<td class="l_th01"><span class="l_sort01" id="CL_a.user_nm" onclick="ListSort(this, '{{ord}}')">회원명</span></td>
-	<!--
-	<td class="l_th01"><span class="l_sort01" id="CL_a.user_nm" onclick="ListSort(this, '{{ord}}')">회원명</span></td>
-	<td class="l_th01"><span class="l_sort01" id="CL_a.login_id" onclick="ListSort(this, '{{ord}}')">회원아이디</span></td>
-	-->
 	<!--@if(SYS_MINOR_YN)-->
 	<td class="l_th01">14세 미만</td>
 	<!--/if(SYS_MINOR_YN)-->
@@ -162,7 +142,6 @@
 <tr class="l_tr_{{list.ROW_CLASS}}" align="center" style="user-select: none;">
 	<td class="l_td01">{{list.__ord}}</td>
 	<td class="l_td01">{{list.id}}</td>
-	<!-- <td class="l_td01">{{list.user_kind_conv}}</td> -->
 	<td class="l_td01" title="{{list.dept_nm_conv}}">{{list.dept_nm}}</td>
 	<td class="l_td01" align="left" title="{{list.user_nm}} ({{list.login_id}})">
 		<span class="crm" _id="{{list.id}}">
@@ -170,10 +149,6 @@
 			{{list.user_nm}} ({{list.login_id}})
 		</span>
 	</td>
-	<!--
-	<td class="l_td01">{{list.user_nm}}</td>
-	<td class="l_td01" align="left"><span class="crm" _id="{{list.id}}">{{list.login_id}}</span></td>
-	-->
 	<!--@if(SYS_MINOR_YN)-->
 	<td class="l_td01">{{list.minor_conv}}</td>
 	<!--/if(SYS_MINOR_YN)-->
@@ -229,15 +204,12 @@ function sendUser(type) {
 }
 
 function sendMailUser(idx) {
-//	if(confirm("메일을 발송하시겠습니까?")) 
 	OpenPopSendMail(idx);
 }
 function sendSmsUser(idx) {
-//	if(confirm("SMS를 발송하시겠습니까?"))  
 	OpenPopSendSms(idx);
 }
 function sendMsgUser(idx) {
-//	if(confirm("쪽지를 발송하시겠습니까?")) 
 	OpenPopSendMsg(idx);
 }
 function setUserValue() {

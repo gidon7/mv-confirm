@@ -1,0 +1,77 @@
+<table border="1">
+
+<!-- ========== 전체 과정 합계 ========== -->
+<tr>
+	<td width="700" colspan="3" bgcolor="#2E7D32" style="color:white; font-weight:bold; font-size:14pt;">
+		■ 전체 과정 설문 응답자수 합계
+	</td>
+</tr>
+<tr><td colspan="3">&nbsp;</td></tr>
+
+<!--@loop(totalList)-->
+<tr>
+	<td width="600" colspan="3" bgcolor="silver">Q{{totalList.sort}}. {{totalList.question}}</td>
+</tr>
+<!--@if(totalList.choice_block)-->
+<!--@loop(sub)-->
+<tr>
+	<td width="600"><div style="margin-left:20px;">{{sub.id}}. {{sub.name}}</div></td>
+	<td width="50" align="right">{{sub.sel_cnt_conv}}명</td>
+	<td width="50" align="right">{{sub.percent}}%</td>
+</tr>
+<!--/loop(sub)-->
+<!--/if(totalList.choice_block)-->
+<!--@nif(totalList.choice_block)-->
+<!--@loop(sub)-->
+<tr>
+	<td width="600" colspan="3">
+		<div style="margin-left:20px;">{{sub.id}}. [{{sub.course_nm}}] {{sub.answer}}</div>
+	</td>
+</tr>
+<!--/loop(sub)-->
+<!--/nif(totalList.choice_block)-->
+<!--/loop(totalList)-->
+
+<tr><td colspan="3">&nbsp;</td></tr>
+<tr><td colspan="3">&nbsp;</td></tr>
+
+<!-- ========== 과정별 설문 응답자수 ========== -->
+<tr>
+	<td width="700" colspan="3" bgcolor="#1565C0" style="color:white; font-weight:bold; font-size:14pt;">
+		■ 과정별 설문 응답자수
+	</td>
+</tr>
+<tr><td colspan="3">&nbsp;</td></tr>
+
+<!--@loop(list)-->
+<!--@if(list.is_first)-->
+<tr>
+	<td width="700" colspan="3" bgcolor="#4472C4" style="color:white; font-weight:bold;">
+		과정명: {{list.course_nm}}
+	</td>
+</tr>
+<!--/if(list.is_first)-->
+<tr>
+	<td width="600" colspan="3" bgcolor="silver">Q{{list.sort}}. {{list.question}}</td>
+</tr>
+<!--@if(list.choice_block)-->
+<!--@loop(test)-->
+<tr>
+	<td width="600"><div style="margin-left:20px;">{{sub.id}}. {{sub.name}}</div></td>
+	<td width="50" align="right">{{sub.sel_cnt_conv}}명</td>
+	<td width="50" align="right">{{sub.percent}}%</td>
+</tr>
+<!--/loop(test)-->
+<!--/if(list.choice_block)-->
+<!--@nif(list.choice_block)-->
+<!--@loop(test)-->
+<tr>
+	<td width="600" colspan="3">
+		<div style="margin-left:20px;">{{sub.id}}. {{sub.answer}}</div>
+	</td>
+</tr>
+<!--/loop(test)-->
+<!--/nif(list.choice_block)-->
+<!--/loop(list)-->
+
+</table>

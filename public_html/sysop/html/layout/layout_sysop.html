@@ -26,31 +26,13 @@
 <script language="javascript" type="text/javascript" src="{{SYS_COMMON_CDN}}/common/js/select2/js/i18n/ko.js"></script>
 <script language="javascript" type="text/javascript" src="{{SYS_COMMON_CDN}}/common/js/colorpicker/js/colorpicker.js"></script>
 <style type="text/css">
-html, body { overflow: hidden; background: var(--bg-base); }
-
 <!--@if(SYS_TABLE_WIDTH)-->
 #sys-contents { width:{{SYS_TABLE_WIDTH}}px; min-width:{{SYS_TABLE_WIDTH}}px; max-width:{{SYS_TABLE_WIDTH}}px; }
 <!--/if(SYS_TABLE_WIDTH)-->
-
-<!--@if(noframe)-->
-#sys-frame-top {height: 60px; display: none;}
-#sys-frame-bottom {position: absolute; display: block; height: auto; bottom: 0; top: 0; left: 0; right: 0; margin: 0;}
-#sys-frame-menu {position: absolute; left: 0px; width: 260px; height: 100%; border: 0; display: none;}
-#sys-frame-main {margin: 0; height: 100%;}
-<!--/if(noframe)-->
 </style>
 </head>
 
 <body marginheight="0" marginwidth="0">
-<!--@if(noframe)-->
-<div id="sys-frame-top">
-	<!--@nif(code)--><!-- @execute(../main/top.jsp?mode=clear&mid={{Menu.gnb_id}}&lnb={{Menu.id}})--><!--/nif(code)-->
-	<!--@if(code)--><!-- @execute(../main/top.jsp?mode=clear&mid={{Menu.gnb_id}}&lnb={{code}})--><!--/if(code)-->
-</div>
-<div id="sys-frame-bottom">
-	<iframe id="sys-frame-menu" src="../main/menu2.jsp?mid={{Menu.gnb_id}}&lnb={{Menu.id}}{{code}}" frameborder="0"></iframe>
-	<div id="sys-frame-main">
-<!--/if(noframe)-->
 	<div id="sys-breadcrumb">
 		<button id="sys-breadcrumb-arrow" type="button" onclick="javascript:Toggle();"><i class="fa fa-angle-left"></i></button>
 		<div id="sys-page-title">
@@ -79,10 +61,6 @@ html, body { overflow: hidden; background: var(--bg-base); }
 			</div>
 		</div>
 	</div>
-<!--@if(noframe)-->
-	</div>
-</div>
-<!--/if(noframe)-->
 </body>
 </html>
 
@@ -93,27 +71,6 @@ try {
     HtmlConvertor();
 } catch(e) { void e; }
 
-$(document).ready(function() {
-	if(!top.document.getElementById("_MFRM")) {
-		$("#sys-breadcrumb-arrow").html("<i class=\"fa fa-minus\" style=\"font-size:12px;\"></i>");
-/*
-		$("#sys-frame-top").show();
-		$("#sys-frame-bottom").css("margin-top", "60px");
-		$("#sys-frame-menu").show();
-		$("#sys-frame-main").css("margin-left", "250px");
-*/
-	}
-});
-
-<!--@if(noframe)-->
-if(!top.document.getElementById("_MFRM")) {
-	document.getElementById("sys-frame-top").style.display = "block";
-	document.getElementById("sys-frame-bottom").style.marginTop = "60px";
-	document.getElementById("sys-frame-menu").style.display = "block";
-	document.getElementById("sys-frame-main").style.marginLeft = "250px";
-}
-<!--/if(noframe)-->
-
 $(window).load(function() {
 	$(".l_tr_even, .l_tr_odd, .l_tr_notice").hover(function() {
 		$(this).addClass("l_tr_hover");
@@ -121,34 +78,43 @@ $(window).load(function() {
 		$(this).removeClass("l_tr_hover");
 	});
 
+	// 필터 칩 active 상태 초기화 (:has() 미지원 브라우저 대응)
+	$(".t_tb01 input[type=radio]:checked, .t_tb01 input[type=checkbox]:checked").closest("label").addClass("chip-active");
+	$(document).on("change", ".t_tb01 input[type=radio]", function() {
+		$(".t_tb01 input[name='" + this.name + "']").closest("label").removeClass("chip-active");
+		if(this.checked) $(this).closest("label").addClass("chip-active");
+	});
+	$(document).on("change", ".t_tb01 input[type=checkbox]", function() {
+		if(this.checked) $(this).closest("label").addClass("chip-active");
+		else $(this).closest("label").removeClass("chip-active");
+	});
+
+// a_tb01 총 건수 숫자 자동 강조
+	$(".a_th01").each(function() {
+		$(this).html($(this).html().replace(/(\d[\d,]*)(\s*&nbsp;)/, '<strong>$1</strong>$2'));
+	});
+
 	$.fn.select2.defaults.set('language', 'ko');
 	$(".js-example-basic-single").select2();
-	<!--@if(noframe)-->
-	//$('[title]').css('cursor', 'help');
-	//$('[title]').wrapInner('<span style="border-bottom:1px dotted;"></span>');
-	//$('[title] a').css('border-bottom', '1px dotted');
-	<!--/if(noframe)-->
 });
 
 var sys_userkind = '{{SYS_USERKIND}}';
 var is_auth_crm = {{IS_AUTH_CRM}};
-var status = "open";
 
 function Toggle() {
-	var el = top.document.getElementById("_MFRM");
+	var el = top.document.getElementById("_Main");
 	if(!el) return;
-    if(status == "open") {
-	    el.cols = "0,*";
-		document.getElementById("sys-breadcrumb-arrow").innerHTML = "<i class=\"fa fa-angle-right\"></i>";
-        status = "close";
-    } else {
-		el.cols = "250,*";
+	var sidebar = top.document.getElementById("admin-sidebar");
+	if(!sidebar) return;
+	if(sidebar.style.width === "0px" || sidebar.style.display === "none") {
+		sidebar.style.width = "250px";
 		document.getElementById("sys-breadcrumb-arrow").innerHTML = "<i class=\"fa fa-angle-left\"></i>";
-		status = "open";
+	} else {
+		sidebar.style.width = "0px";
+		document.getElementById("sys-breadcrumb-arrow").innerHTML = "<i class=\"fa fa-angle-right\"></i>";
 	}
-	parent.calcSize();
-    return;
 }
+
 function addShortcut() {
 	var url = location.href;
 	var link = url.substring(url.indexOf("/sysop/"), url.length);
@@ -160,63 +126,5 @@ function addShortcut() {
 <!--@nif(SYS_BLINDUSER)-->var sys_blinduser = false;<!--/nif(SYS_BLINDUSER)-->
 
 call("/sysop/main/call_blind.jsp");
-
-// ── 검색 필터 토글 (t_tb01 → 접기/펼치기) ──
-$(window).load(function() {
-    // 대시보드(#dashboard01) 내부 t_tb01은 제외
-    var $t = $(".t_tb01").not("#dashboard01 .t_tb01");
-    if (!$t.length) return;
-
-    // 토글 버튼 생성
-    var $btn = $('<button type="button" class="filter-toggle-btn"><i class="fa fa-search"></i> 검색 <span class="filter-toggle-badge"></span><i class="fa fa-angle-down"></i></button>');
-
-    // 래퍼 생성 (t_tb01을 감쌈)
-    var $wrap = $('<div class="filter-toggle-wrap"></div>');
-    var $collapse = $('<div class="filter-collapse"></div>');
-
-    // 첫 번째 t_tb01 앞에 삽입
-    $t.first().before($wrap);
-    $wrap.append($btn);
-    $wrap.append($collapse);
-    $t.each(function() { $collapse.append(this); });
-
-    // 활성 검색조건 카운트
-    function countActiveFilters() {
-        var cnt = 0;
-        $collapse.find("input[type=text], input[type=hidden][name^='s_']").each(function() {
-            if (this.name === "s_keyword" && this.value) cnt++;
-            else if (this.name && this.name.indexOf("s_") === 0 && this.type === "text" && this.value) cnt++;
-        });
-        $collapse.find("select[name^='s_']").each(function() {
-            if (this.value) cnt++;
-        });
-        $collapse.find("input[type=radio][name^='s_']:checked").each(function() {
-            if (this.value) cnt++;
-        });
-        return cnt;
-    }
-
-    var cnt = countActiveFilters();
-    var $badge = $btn.find(".filter-toggle-badge");
-
-    if (cnt > 0) {
-        // 검색 조건이 있으면 펼침
-        $badge.text(cnt).addClass("show");
-        $collapse.addClass("open");
-        $btn.addClass("active");
-    }
-
-    // 토글 클릭
-    $btn.on("click", function() {
-        var isOpen = $collapse.hasClass("open");
-        if (isOpen) {
-            $collapse.removeClass("open");
-            $btn.removeClass("active");
-        } else {
-            $collapse.addClass("open");
-            $btn.addClass("active");
-        }
-    });
-});
 
 </script>
