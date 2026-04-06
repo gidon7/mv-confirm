@@ -2,7 +2,12 @@
 
 String docRoot = Config.getDocRoot();
 String jndi = Config.getJndi();
-String tplRoot = Config.getDocRoot() + "/sysop/html";
+// UI 버전 분기: 쿠키 SYSOP_UI=v5 → html5 (신버전), 그 외 → html (구버전)
+String _uiVersion = "";
+Cookie[] _cookies = request.getCookies();
+if(_cookies != null) { for(Cookie c : _cookies) { if("SYSOP_UI".equals(c.getName())) { _uiVersion = c.getValue(); break; } } }
+boolean isNewUI = "v5".equals(_uiVersion);
+String tplRoot = Config.getDocRoot() + "/sysop/" + (isNewUI ? "html5" : "html");
 
 Malgn m = new Malgn(request, response, out);
 

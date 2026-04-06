@@ -1,5 +1,24 @@
 <%@ page contentType="text/html; charset=utf-8" %><%@ include file="init.jsp" %><%
 
+//출력-GNB JSON (1depth 메뉴 목록)
+if("gnb_json".equals(m.rs("mode"))) {
+	MenuLocaleDao ml2 = new MenuLocaleDao();
+	DataSet gnbList = Menu.query(
+		"SELECT b.id, MAX(b.menu_type) type, MAX(b.parent_id) parent_id, MAX(COALESCE(ml.menu_locale_nm, b.menu_nm)) name, MAX(b.sort) sort, MAX(b.link) link, MAX(b.depth) depth, MAX(b.target) target, MAX(b.icon) icon "
+		+ " FROM " + new UserMenuDao().table + " a "
+		+ " INNER JOIN " + Menu.table + " b ON a.menu_id = b.id AND b.status = 1 AND b.menu_type = 'ADMIN' AND b.id > 0 "
+		+ " INNER JOIN " + SiteMenu.table + " sm ON a.menu_id = sm.menu_id AND sm.site_id = " + siteId
+		+ " LEFT JOIN " + ml2.table + " ml ON b.id = ml.menu_id AND ml.locale_cd = 'default' "
+		+ " WHERE b.parent_id = 0 AND b.display_yn = 'Y' "
+		+ (!"S".equals(userKind) ? " AND a.user_id = " + userId : "")
+		+ " GROUP BY b.id "
+		+ " ORDER BY MAX(b.sort) ASC"
+	);
+	response.setContentType("application/json;charset=utf-8");
+	out.print(gnbList.serialize());
+	return;
+}
+
 //기본키
 String mid = m.rs("mid");
 if("".equals(mid)) {
