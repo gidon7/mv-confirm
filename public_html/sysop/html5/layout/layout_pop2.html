@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{{SYS_TITLE}}</title>
+<!--@if(IS_DEV_SERVER)--><link rel="shortcut icon" href="{{SYS_COMMON_CDN}}/sysop/favicon_devsysop.ico" /><!--/if(IS_DEV_SERVER)-->
+<!--@nif(IS_DEV_SERVER)--><link rel="shortcut icon" href="{{SYS_COMMON_CDN}}/sysop/favicon_servicesysop.ico" /><!--/nif(IS_DEV_SERVER)-->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.13.2/themes/base/jquery-ui.min.css">
+<link rel="stylesheet" href="/sysop/html5/css/admin5.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.13.2/jquery-ui.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
+<script src="/common/js/common.js?t={{SYS_TODAY}}165001"></script>
+<script src="{{SYS_COMMON_CDN}}/common/js/validate.js"></script>
+<script src="{{SYS_COMMON_CDN}}/common/js/admin_func.js?t={{SYS_TODAY}}165001"></script>
+</head>
+
+<body style="margin:0; padding:0; background:#fff; overflow:auto;">
+
+<div id="alert_area"></div>
+<!--@include(BODY)-->
+
+<iframe name="sysfrm" id="sysfrm" style="display:none;"></iframe>
+<iframe name="CalendarLayer" id="CalendarLayer" style="display:none;"></iframe>
+
+</body>
+</html>
+
+<script>
+try { HtmlConvertor(); } catch(e) {}
+
+$(function() {
+	$(".l_tr_even, .l_tr_odd, .l_tr_notice").hover(function() {
+		$(this).addClass("l_tr_hover");
+	}, function() {
+		$(this).removeClass("l_tr_hover");
+	});
+	$.fn.select2.defaults.set('language', 'ko');
+	$(".js-example-basic-single").select2();
+});
+
+var sys_userkind = '{{SYS_USERKIND}}';
+var is_auth_crm = {{IS_AUTH_CRM}};
+
+<!--@if(SYS_BLINDUSER)-->var sys_blinduser = true;<!--/if(SYS_BLINDUSER)-->
+<!--@nif(SYS_BLINDUSER)-->var sys_blinduser = false;<!--/nif(SYS_BLINDUSER)-->
+</script>

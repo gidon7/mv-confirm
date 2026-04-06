@@ -259,7 +259,132 @@ var Admin5 = (function() {
         $(function() {
             if (typeof setLabel === 'function') setLabel();
             if (typeof initFilterChips === 'function') initFilterChips();
+            initFilterCompact();
         });
+    }
+
+    // ── 필터 → 컴팩트바 + 모달 자동 변환 ─────────
+    // .filter-panel (신규) 및 .t_tb01 (레거시) 모두 자동 처리
+    function initFilterCompact() {
+        // 대상 찾기: .filter-panel 또는 첫 번째 .t_tb01 (대시보드 내부 제외)
+        var panel = document.querySelector('.filter-panel');
+        if (!panel) {
+            var tables = document.querySelectorAll('.t_tb01');
+            for (var i = 0; i < tables.length; i++) {
+                // 대시보드(#dashboard01) 내부는 제외
+                if (!tables[i].closest('#dashboard01')) { panel = tables[i]; break; }
+            }
+        }
+        if (!panel) return;
+
+        var form = panel.closest('form');
+        if (!form) return;
+
+        // 기존 키워드 input 찾기 (form 전체에서)
+        var kwInput = form.querySelector('input[name="s_keyword"]');
+        var kwValue = kwInput ? kwInput.value : '';
+
+        // 기존 submit 버튼 찾기
+        var submitBtn = panel.querySelector('button[type="submit"]')
+                     || panel.querySelector('.bttn2.blue')
+                     || panel.querySelector('.btn-primary');
+
+        // 활성 필터 개수 세기
+        function countActive() {
+            var cnt = 0;
+            panel.querySelectorAll('input[type=radio]:checked, input[type=checkbox]:checked').forEach(function(el) {
+                if (el.value) cnt++;
+            });
+            panel.querySelectorAll('select[name^="s_"]').forEach(function(el) {
+                if (el.value) cnt++;
+            });
+            if (kwValue) cnt++;
+            return cnt;
+        }
+
+        // ① 컴팩트 바 생성
+        var compact = document.createElement('div');
+        compact.className = 'filter-compact';
+        compact.innerHTML =
+            '<button type="button" class="filter-compact-toggle" id="_fcToggle">'
+          +   '<i class="fa fa-sliders"></i>'
+          + '</button>'
+          + '<div class="search-input-wrap" style="flex:1;">'
+          +   '<i class="fa fa-search"></i>'
+          +   '<input type="text" name="_fc_keyword" placeholder="검색어를 입력해 주세요" value="' + escapeHtml(kwValue) + '" style="width:100%;">'
+          + '</div>'
+          + '<button type="submit" class="filter-compact-search"><i class="fa fa-search"></i></button>';
+
+        // ② 배경 딤
+        var backdrop = document.createElement('div');
+        backdrop.className = 'filter-modal-backdrop';
+        backdrop.id = '_fcBackdrop';
+
+        // ③ 모달
+        var modal = document.createElement('div');
+        modal.className = 'filter-modal';
+        modal.id = '_fcModal';
+
+        var cnt = countActive();
+        var badge = cnt > 0 ? '<span class="filter-modal-badge">' + cnt + '</span>' : '';
+
+        modal.innerHTML =
+            '<div class="filter-modal-header">'
+          +   '<h3>상세 검색 ' + badge + '</h3>'
+          +   '<button type="button" id="_fcClose"><i class="fa fa-times"></i></button>'
+          + '</div>'
+          + '<div class="filter-modal-body"></div>'
+          + '<div class="filter-modal-footer">'
+          +   '<button type="submit" class="btn btn-primary btn-lg" style="min-width:180px;"><i class="fa fa-search"></i> 검색</button>'
+          + '</div>';
+
+        // 기존 패널 내용을 모달 body로 이동
+        var modalBody = modal.querySelector('.filter-modal-body');
+        while (panel.firstChild) {
+            modalBody.appendChild(panel.firstChild);
+        }
+
+        // 모달 안의 기존 submit 버튼 숨김
+        if (submitBtn) submitBtn.style.display = 'none';
+
+        // 기존 panel 숨기고 컴팩트바/모달 삽입
+        panel.style.display = 'none';
+        panel.parentNode.insertBefore(compact, panel);
+        document.body.appendChild(backdrop);
+        document.body.appendChild(modal);
+
+        // 토글 이벤트
+        function openModal() {
+            modal.classList.add('open');
+            backdrop.classList.add('open');
+        }
+        function closeModal() {
+            modal.classList.remove('open');
+            backdrop.classList.remove('open');
+        }
+
+        document.getElementById('_fcToggle').addEventListener('click', function() {
+            modal.classList.contains('open') ? closeModal() : openModal();
+        });
+        document.getElementById('_fcClose').addEventListener('click', closeModal);
+        backdrop.addEventListener('click', closeModal);
+
+        // submit 시 키워드 동기화
+        form.addEventListener('submit', function() {
+            var compactKw = compact.querySelector('input[name="_fc_keyword"]');
+            if (kwInput && compactKw && compactKw.value && !modal.classList.contains('open')) {
+                kwInput.value = compactKw.value;
+            }
+        });
+
+        // 활성 필터 뱃지
+        if (cnt > 0) {
+            var toggleBtn = document.getElementById('_fcToggle');
+            var b = document.createElement('span');
+            b.className = 'filter-compact-badge';
+            b.textContent = cnt;
+            toggleBtn.appendChild(b);
+        }
     }
 
     // ── Toast 알림 ──────────────────────────────────
